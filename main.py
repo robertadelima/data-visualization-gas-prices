@@ -9,6 +9,18 @@ from dash.dependencies import Input, Output
 
 app = dash.Dash(__name__)
 
+# Import data
 gas_prices = pd.read_csv("dados-ANP-2013-2020.csv", sep=';', encoding='cp1252')
-print(gas_prices.head())
 
+
+# App layout
+app.layout = html.Div([
+
+    html.H1("Preços dos Combustíveis - Santa Catarina, Brasil", style={'text-align': 'center'}),
+
+])
+
+
+# Run
+if __name__ == '__main__':
+    app.run_server(debug=True)
