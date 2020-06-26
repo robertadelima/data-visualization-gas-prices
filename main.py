@@ -22,12 +22,108 @@ def clean_data_and_generate_dataset():
 df = clean_data_and_generate_dataset()
 print(df.head(3))
 
-# Generate the app
 app = dash.Dash(__name__)
+
+city_map = html.Div([])
+
+info_badges = html.Div([
+    html.Div([
+        html.P("Total de municípios selecionados",
+            id="cities_badge_label"),
+        html.H6("4",
+            id="cities_badge_count")
+    ], className="badge"),
+    html.Div([
+        html.P("Total de preços aferidos",
+            id="prices_badge_label"),
+        html.H6("1578",
+            id="prices_badge_count")
+    ], className="badge"),
+    html.Div([
+        html.P("Total de meses analisados",
+            id="months_badge_label"),
+        html.H6("60",
+            id="months_badge_count")
+    ], className="badge"),
+])
+
+filters = html.Div([
+    html.P("Municípios selecionados:",
+        className="dcc_control"
+    ),
+    dcc.Checklist(
+        id="all_cities_checkbox",
+        options=[{"label": "Todos", "value": "all"}],
+        className="dcc_control",
+        value=[],
+        style={'text-align': 'right'},
+    ),
+    dcc.Dropdown(
+        id="selected_cities_dropdown",
+        options=[
+            {"label": "Itajaí", "value": "itj"},
+            {"label": "Ilhota", "value": "ilh"},
+        ],
+        multi=True,
+        value=[],
+        className="dcc_control",
+    ),
+    html.P("Combustível selecionado",
+        className="dcc_control"
+    ),
+    dcc.RadioItems(
+        id="selected_fuel_radio",
+        options=[
+            {"label": "Gasolina comum", "value": "gasolina"},
+            {"label": "GLP", "value": "glp"},
+        ],
+        value="gasolina",
+        labelStyle={"display": "inline-block"},
+        className="dcc_control",
+    ),
+])
+date_slider = html.Div([
+    html.H2("2013"),
+    dcc.RangeSlider(
+        id="year_slider",
+        min=2013,
+        max=2020,
+        value=[2013, 2020],
+        className="dcc_control",
+    ),
+    html.H2("2020"),
+])
+
+header_section = html.Div([
+    html.Div([
+        html.Img(src=app.get_asset_url('bandeira-sc.jpg'))
+    ]),
+    html.Div([
+        html.H1('Preços dos Combustíveis - Santa Catarina, Brasil',
+                style={
+                    'text-align': 'left',
+                }),
+        html.H4('Última atualização: 20/06/2020',
+                style={
+                    'text-align': 'left',
+                }),
+    ])
+])
+data_selection_section = html.Div([
+    city_map,
+    info_badges,
+    filters,
+    date_slider,
+])
+plots_section = html.Div([
+
+])
+
+# Generate the app
 app.layout = html.Div([
-
-    html.H1("Preços dos Combustíveis - Santa Catarina, Brasil", style={'text-align': 'center'}),
-
+    header_section,
+    data_selection_section,
+    plots_section,
 ])
 
 # Run
