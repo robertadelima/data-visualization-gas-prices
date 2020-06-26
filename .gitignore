@@ -1,6 +1,9 @@
 # Editors
 .vscode/
 
+# API key
+.mapbox_token.txt
+
 # Vagrant
 .vagrant/
 

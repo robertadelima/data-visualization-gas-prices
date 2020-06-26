@@ -17,14 +17,29 @@ def clean_data_and_generate_dataset():
     df2['NOME MUNICIPIO'] = df2['NOME MUNICIPIO'].str.upper()
     # Left join
     df3 = pd.merge(df1, df2, left_on='MUNICÍPIO', right_on='NOME MUNICIPIO', how ='left') 
-    return df3
+    return df3, df2
 
-df = clean_data_and_generate_dataset()
+df, df2 = clean_data_and_generate_dataset()
 print(df.head(3))
 
 app = dash.Dash(__name__)
 
-city_map = html.Div([])
+cities_map = html.Div([
+    dcc.Dropdown(id="regiao_selecionada",
+                 options=[
+                     {"label": "SC", "value": "SC"},
+                     {"label": "RS", "value": "RS"},
+                     {"label": "PR", "value": "PR"},
+                     {"label": "SP", "value": "SP"},
+                     {"label": "RJ", "value": "RJ"},],
+                 multi=True,
+                 value="SC",
+                 style={'width': "40%"}
+                 ),
+    html.Div(id='output_container', children=[]),
+    html.Br(),
+    dcc.Graph(id='brazil_map', figure={})
+])
 
 info_badges = html.Div([
     html.Div([
@@ -110,13 +125,12 @@ header_section = html.Div([
     ])
 ])
 data_selection_section = html.Div([
-    city_map,
+    cities_map,
     info_badges,
     filters,
     date_slider,
 ])
 plots_section = html.Div([
-
 ])
 
 # Generate the app
@@ -125,6 +139,26 @@ app.layout = html.Div([
     data_selection_section,
     plots_section,
 ])
+
+# Connect the Plotly graphs with Dash Components
+@app.callback(
+    [Output(component_id='output_container', component_property='children'),
+     Output(component_id='brazil_map', component_property='figure')],
+    [Input(component_id='regiao_selecionada', component_property='value')]
+)
+    # Plotly Express
+def update_graph(opcao_selecionada):
+
+    container = "Região selecionada: {}".format(opcao_selecionada)
+    if not isinstance(opcao_selecionada, list): opcao_selecionada = [opcao_selecionada]
+
+    dff = df2.copy()
+    dff = dff[dff["UF"].isin(opcao_selecionada)]
+
+    px.set_mapbox_access_token(open(".mapbox_token.txt").read())
+    fig = px.scatter_mapbox(dff, lat="LATITUDE", lon="LONGITUDE", color_continuous_scale=px.colors.cyclical.IceFire, 
+        size_max=30, zoom=5)
+    return container, fig
 
 # Run
 if __name__ == '__main__':
