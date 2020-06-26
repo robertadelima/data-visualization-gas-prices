@@ -33,7 +33,7 @@ app.layout = html.Div([
                      {"label": "PR", "value": "PR"},
                      {"label": "SP", "value": "SP"},
                      {"label": "RJ", "value": "RJ"},],
-                 multi=False,
+                 multi=True,
                  value="SC",
                  style={'width': "40%"}
                  ),
@@ -53,19 +53,16 @@ app.layout = html.Div([
 )
     # Plotly Express
 def update_graph(opcao_selecionada):
-    print(opcao_selecionada)
-    print(type(opcao_selecionada))
 
     container = "Região selecionada: {}".format(opcao_selecionada)
-
+    if not isinstance(opcao_selecionada, list): opcao_selecionada = [opcao_selecionada]
+    
     dff = df2.copy()
-    dff = dff[dff["UF"] == opcao_selecionada]
+    dff = dff[dff["UF"].isin(opcao_selecionada)]
 
     px.set_mapbox_access_token(open(".mapbox_token.txt").read())
-    #df = px.data.carshare()
     fig = px.scatter_mapbox(dff, lat="LATITUDE", lon="LONGITUDE", color_continuous_scale=px.colors.cyclical.IceFire, 
         size_max=30, zoom=5)
-    #fig.show()
     return container, fig
 
 # Run
