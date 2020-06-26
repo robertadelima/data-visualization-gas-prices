@@ -9,8 +9,8 @@ from dash.dependencies import Input, Output
 
 def clean_data_and_generate_dataset():
     # Import data
-    df1 = pd.read_csv("dados-ANP-2013-2020.csv", sep=';', encoding='cp1252')
-    df2 = pd.read_csv("dados-IBGE-municipios.csv", sep=';', encoding='cp1252')
+    df1 = pd.read_csv("data/dados-ANP-2013-2020.csv", sep=';', encoding='cp1252')
+    df2 = pd.read_csv("data/dados-IBGE-municipios.csv", sep=';', encoding='cp1252')
     # Removing accents
     df2['NOME MUNICIPIO'] = df2['NOME MUNICIPIO'].str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
     # IBGE data to upper case
