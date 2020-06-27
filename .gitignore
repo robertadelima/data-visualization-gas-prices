@@ -2,7 +2,7 @@
 .vscode/
 
 # API key
-.mapbox_token.txt
+#.mapbox_token.txt
 
 # Vagrant
 .vagrant/
