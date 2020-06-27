@@ -51,3 +51,9 @@ class COLUMNS:
 
     LATITUDE = 'LATITUDE'
     LONGITUDE = 'LONGITUDE'
+
+__df = DATASET
+
+CITIES = pd.Series(__df[COLUMNS.CITY].unique()).to_dict()
+PRODUCTS = pd.Series(__df[COLUMNS.PRODUCT].unique()).to_dict()
+STATES = pd.Series(__df[COLUMNS.STATE].unique()).to_dict()
