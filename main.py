@@ -28,7 +28,7 @@ cities_map = html.Div([
                  options=options_from_dict(CITIES),
                  multi=True,
                  value=1,
-                 style={'width': "40%"}
+                 style={'width': "60%"}
                  ),
     html.Div(id='output_container', children=[]),
     html.Br(),
@@ -101,12 +101,12 @@ date_slider = html.Div([
 
 header_section = html.Div([
     html.Div([
-        html.Img(src=app.get_asset_url('bandeira-sc.jpg'))
+        html.Img(src=app.get_asset_url('bandeira-sc.jpg'), style={'width':'5%'})
     ]),
     html.Div([
         html.H1('Preços dos Combustíveis - Santa Catarina, Brasil',
                 style={
-                    'text-align': 'left',
+                    'text-align': 'left'
                 }),
         html.H4('Última atualização: 20/06/2020',
                 style={
@@ -150,8 +150,9 @@ def update_graph(cidades_selecionadas, selected_fuel_radio):
     dff = dff[dff["PRODUTO"] == PRODUCTS[int(selected_fuel_radio)]]
 
     px.set_mapbox_access_token(open(".mapbox_token.txt").read())
-    fig = px.scatter_mapbox(dff, lat="LATITUDE", lon="LONGITUDE", color_continuous_scale=px.colors.cyclical.IceFire, 
-        size_max=30, zoom=5, size="PREÇO MÉDIO REVENDA")
+    fig = px.scatter_mapbox(dff, lat=COLUMNS.LATITUDE, lon=COLUMNS.LONGITUDE, color_continuous_scale=px.colors.cyclical.IceFire, 
+        zoom=3, size=COLUMNS.MARKET_PRICE_MEAN, width=1000, height=800, mapbox_style="open-street-map",
+        center=dict(lat=-11.619893, lon=-56.408030))
     
     dfff = dff.groupby([COLUMNS.MONTH, COLUMNS.CITY])[COLUMNS.MARKET_PRICE_MEAN].apply(list)
 
