@@ -15,3 +15,22 @@ header{
     padding-right: 10px;
     vertical-align: middle;
 }
+
+.map_and_filters{
+    border: 1px solid yellow;
+    display: flex;
+}
+
+.filters{
+    border: 1px solid yellowgreen;
+    display: inline-block;
+}
+
+.map{
+    margin: 0px;
+}
+
+.badge{
+    border: 1px solid red;
+    vertical-align: middle;
+}

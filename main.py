@@ -23,16 +23,8 @@ def options_from_dict(dictionary):
 # --------------------
 
 cities_map = html.Div([
-    dcc.Dropdown(id="selected_cities",
-                 options=options_from_dict(CITIES),
-                 multi=True,
-                 value=1,
-                 style={'width': "60%"}
-                 ),
-    html.Div(id='output_container', children=[]),
-    html.Br(),
     dcc.Graph(id='brazil_map', figure={}),
-])
+], className='map')
 
 info_badges = html.Div([
     html.Div([
@@ -61,20 +53,12 @@ filters = html.Div([
     html.P("Municípios selecionados:",
         className="dcc_control"
     ),
-    dcc.Checklist(
-        id="all_cities_checkbox",
-        options=[{"label": "Todos", "value": "all"}],
-        className="dcc_control",
-        value=[],
-        style={'text-align': 'right'},
-    ),
-    dcc.Dropdown(
-        id="selected_cities_dropdown",
-        options=options_from_dict(CITIES),
-        multi=True,
-        value=[],
-        className="dcc_control",
-    ),
+    dcc.Dropdown(id="selected_cities",
+            options=options_from_dict(CITIES),
+            multi=True,
+            value=1,
+            className="dcc_control",
+            ),
     html.P("Combustível selecionado",
         className="dcc_control"
     ),
@@ -112,10 +96,11 @@ header_section = html.Div([
 ])
 data_selection_section = html.Div([
     cities_map,
-    info_badges,
-    filters,
-    date_slider,
-])
+    html.Div([
+        info_badges,
+        filters,
+    ], className="filters")
+], className="map_and_filters")
 plots_section = html.Div([
      dcc.Graph(id='market_price_mean_graph', figure={})
 ])
@@ -124,13 +109,13 @@ plots_section = html.Div([
 app.layout = html.Div([
     header_section,
     data_selection_section,
+    date_slider,
     plots_section,
 ])
 
 # Connect the Plotly graphs with Dash Components
 @app.callback(
-    [Output(component_id='output_container', component_property='children'),
-     Output(component_id='brazil_map', component_property='figure'),
+    [Output(component_id='brazil_map', component_property='figure'),
      Output(component_id='market_price_mean_graph', component_property='figure')
      ],
     [Input(component_id='selected_cities', component_property='value'),
@@ -140,7 +125,6 @@ app.layout = html.Div([
 def update_graph(selected_cities, selected_product):
     if not isinstance(selected_cities, list): selected_cities = [selected_cities]
     nomes_cidades = [CITIES[int(cidade)] for cidade in selected_cities]
-    container = "Região selecionada: {} Produto selecionado: {}".format(nomes_cidades, selected_product)
 
     dff = df.copy()
     dff = dff[dff[COLUMNS.CITY_NAME].isin(nomes_cidades)]
@@ -148,13 +132,13 @@ def update_graph(selected_cities, selected_product):
 
     px.set_mapbox_access_token(open(".mapbox_token.txt").read())
     fig = px.scatter_mapbox(dff, lat=COLUMNS.LATITUDE, lon=COLUMNS.LONGITUDE, color_continuous_scale=px.colors.cyclical.IceFire, 
-        zoom=3, size=COLUMNS.MARKET_PRICE_MEAN, width=1000, height=800, mapbox_style="open-street-map",
+        zoom=3, size=COLUMNS.MARKET_PRICE_MEAN, width=800, height=600, mapbox_style="open-street-map",
         center=dict(lat=-11.619893, lon=-56.408030))
     
     dfff = dff.groupby([COLUMNS.MONTH, COLUMNS.CITY])[COLUMNS.MARKET_PRICE_MEAN].apply(list)
 
     fig2 = px.line(dff, x=COLUMNS.MONTH, y=COLUMNS.MARKET_PRICE_MEAN, line_group=COLUMNS.CITY, color=COLUMNS.CITY)
-    return container, fig , fig2
+    return fig , fig2
 
 # Run
 if __name__ == '__main__':
