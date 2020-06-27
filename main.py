@@ -10,7 +10,7 @@ from dash.dependencies import Input, Output
 from data_provider import *
 
 df = DATASET
-print(df.head(3))
+#print(df.head(3))
 
 app = dash.Dash(__name__)
 
@@ -24,15 +24,16 @@ def options_from_dict(dictionary):
 # --------------------
 
 cities_map = html.Div([
-    dcc.Dropdown(id="regiao_selecionada",
-                 options=options_from_dict(STATES),
+    dcc.Dropdown(id="cidades_selecionadas",
+                 options=options_from_dict(CITIES),
                  multi=True,
-                 value=STATES[0],
+                 value=1,
                  style={'width': "40%"}
                  ),
     html.Div(id='output_container', children=[]),
     html.Br(),
-    dcc.Graph(id='brazil_map', figure={})
+    dcc.Graph(id='brazil_map', figure={}),
+    dcc.Graph(id='market_price_mean_graph', figure={})
 ])
 
 info_badges = html.Div([
@@ -81,7 +82,7 @@ filters = html.Div([
     dcc.RadioItems(
         id="selected_fuel_radio",
         options=options_from_dict(PRODUCTS),
-        value="gasolina",
+        value="GASOLINA COMUM",
         labelStyle={"display": "inline-block"},
         className="dcc_control",
     ),
@@ -132,22 +133,31 @@ app.layout = html.Div([
 # Connect the Plotly graphs with Dash Components
 @app.callback(
     [Output(component_id='output_container', component_property='children'),
-     Output(component_id='brazil_map', component_property='figure')],
-    [Input(component_id='regiao_selecionada', component_property='value')]
+     Output(component_id='brazil_map', component_property='figure'),
+     Output(component_id='market_price_mean_graph', component_property='figure')
+     ],
+    [Input(component_id='cidades_selecionadas', component_property='value'),
+    Input(component_id='selected_fuel_radio', component_property='value')]
 )
     # Plotly Express
-def update_graph(opcao_selecionada):
-
-    container = "Região selecionada: {}".format(opcao_selecionada)
-    if not isinstance(opcao_selecionada, list): opcao_selecionada = [opcao_selecionada]
+def update_graph(cidades_selecionadas, selected_fuel_radio):
+    if not isinstance(cidades_selecionadas, list): cidades_selecionadas = [cidades_selecionadas]
+    nomes_cidades = [CITIES[int(cidade)] for cidade in cidades_selecionadas]
+    container = "Região selecionada: {} Produto selecionado: {}".format(nomes_cidades, selected_fuel_radio)
 
     dff = df.copy()
-    dff = dff[dff["UF"].isin(opcao_selecionada)]
+    dff = dff[dff["NOME MUNICIPIO"].isin(nomes_cidades)]
+    dff = dff[dff["PRODUTO"] == selected_fuel_radio]
 
     px.set_mapbox_access_token(open(".mapbox_token.txt").read())
     fig = px.scatter_mapbox(dff, lat="LATITUDE", lon="LONGITUDE", color_continuous_scale=px.colors.cyclical.IceFire, 
-        size_max=30, zoom=5)
-    return container, fig
+        size_max=30, zoom=5, size="PREÇO MÉDIO REVENDA")
+    
+    dfff = dff.groupby([COLUMNS.MONTH, COLUMNS.CITY])[COLUMNS.MARKET_PRICE_MEAN].apply(list)
+
+    fig2 = px.line(dff, x=COLUMNS.MONTH, y=COLUMNS.MARKET_PRICE_MEAN, line_group='MUNICÍPIO', color='MUNICÍPIO')
+    #fig2 = px.line(x, y)
+    return container, fig , fig2
 
 # Run
 if __name__ == '__main__':
