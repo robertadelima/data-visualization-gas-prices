@@ -7,19 +7,9 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-def clean_data_and_generate_dataset():
-    # Import data
-    df1 = pd.read_csv("data/dados-ANP-2013-2020.csv", sep=';', encoding='cp1252')
-    df2 = pd.read_csv("data/dados-IBGE-municipios.csv", sep=';', encoding='cp1252')
-    # Removing accents
-    df2['NOME MUNICIPIO'] = df2['NOME MUNICIPIO'].str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
-    # IBGE data to upper case
-    df2['NOME MUNICIPIO'] = df2['NOME MUNICIPIO'].str.upper()
-    # Left join
-    df3 = pd.merge(df1, df2, left_on='MUNICÍPIO', right_on='NOME MUNICIPIO', how ='left') 
-    return df3, df2
+from data_provider import DATASET, COLUMNS
 
-df, df2 = clean_data_and_generate_dataset()
+df = DATASET
 print(df.head(3))
 
 app = dash.Dash(__name__)
@@ -152,7 +142,7 @@ def update_graph(opcao_selecionada):
     container = "Região selecionada: {}".format(opcao_selecionada)
     if not isinstance(opcao_selecionada, list): opcao_selecionada = [opcao_selecionada]
 
-    dff = df2.copy()
+    dff = df.copy()
     dff = dff[dff["UF"].isin(opcao_selecionada)]
 
     px.set_mapbox_access_token(open(".mapbox_token.txt").read())
