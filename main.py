@@ -33,7 +33,6 @@ cities_map = html.Div([
     html.Div(id='output_container', children=[]),
     html.Br(),
     dcc.Graph(id='brazil_map', figure={}),
-    dcc.Graph(id='market_price_mean_graph', figure={})
 ])
 
 info_badges = html.Div([
@@ -55,7 +54,8 @@ info_badges = html.Div([
         html.H6("60",
             id="months_badge_count")
     ], className="badge"),
-])
+],style={'display': 'flex'}
+)
 county_options = [
 ]
 filters = html.Div([
@@ -86,7 +86,8 @@ filters = html.Div([
         labelStyle={"display": "inline-block"},
         className="dcc_control",
     ),
-])
+],style={'display': 'inline-block'}
+)
 date_slider = html.Div([
     html.H2("2013"),
     dcc.RangeSlider(
@@ -106,7 +107,7 @@ header_section = html.Div([
     html.Div([
         html.H1('Preços dos Combustíveis - Santa Catarina, Brasil',
                 style={
-                    'text-align': 'left'
+                    'text-align': 'left',
                 }),
         html.H4('Última atualização: 20/06/2020',
                 style={
@@ -121,6 +122,7 @@ data_selection_section = html.Div([
     date_slider,
 ])
 plots_section = html.Div([
+     dcc.Graph(id='market_price_mean_graph', figure={})
 ])
 
 # Generate the app

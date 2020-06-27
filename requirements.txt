@@ -1,6 +1,8 @@
 Brotli==1.0.7
 click==7.1.2
+cycler==0.10.0
 dash==1.13.3
+dash-bootstrap-components==0.10.3
 dash-core-components==1.10.1
 dash-html-components==1.0.3
 dash-renderer==1.5.0
@@ -10,7 +12,9 @@ Flask-Compress==1.5.0
 future==0.18.2
 itsdangerous==1.1.0
 Jinja2==2.11.2
+kiwisolver==1.2.0
 MarkupSafe==1.1.1
+matplotlib==3.2.2
 numpy==1.18.5
 packaging==20.4
 pandas==1.0.5
