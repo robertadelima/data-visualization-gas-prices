@@ -7,23 +7,27 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-from data_provider import DATASET, COLUMNS
+from data_provider import *
 
 df = DATASET
 print(df.head(3))
 
 app = dash.Dash(__name__)
 
+# --------------------
+
+def options_from_dict(dictionary):
+    return [{ "label": str(dictionary[key]),
+              "value": str(key) }
+            for key in dictionary]
+
+# --------------------
+
 cities_map = html.Div([
     dcc.Dropdown(id="regiao_selecionada",
-                 options=[
-                     {"label": "SC", "value": "SC"},
-                     {"label": "RS", "value": "RS"},
-                     {"label": "PR", "value": "PR"},
-                     {"label": "SP", "value": "SP"},
-                     {"label": "RJ", "value": "RJ"},],
+                 options=options_from_dict(STATES),
                  multi=True,
-                 value="SC",
+                 value=STATES[0],
                  style={'width': "40%"}
                  ),
     html.Div(id='output_container', children=[]),
@@ -51,7 +55,8 @@ info_badges = html.Div([
             id="months_badge_count")
     ], className="badge"),
 ])
-
+county_options = [
+]
 filters = html.Div([
     html.P("Municípios selecionados:",
         className="dcc_control"
@@ -65,10 +70,7 @@ filters = html.Div([
     ),
     dcc.Dropdown(
         id="selected_cities_dropdown",
-        options=[
-            {"label": "Itajaí", "value": "itj"},
-            {"label": "Ilhota", "value": "ilh"},
-        ],
+        options=options_from_dict(CITIES),
         multi=True,
         value=[],
         className="dcc_control",
@@ -78,10 +80,7 @@ filters = html.Div([
     ),
     dcc.RadioItems(
         id="selected_fuel_radio",
-        options=[
-            {"label": "Gasolina comum", "value": "gasolina"},
-            {"label": "GLP", "value": "glp"},
-        ],
+        options=options_from_dict(PRODUCTS),
         value="gasolina",
         labelStyle={"display": "inline-block"},
         className="dcc_control",
