@@ -82,7 +82,7 @@ filters = html.Div([
     dcc.RadioItems(
         id="selected_fuel_radio",
         options=options_from_dict(PRODUCTS),
-        value="GASOLINA COMUM",
+        value=0,
         labelStyle={"display": "inline-block"},
         className="dcc_control",
     ),
@@ -147,7 +147,7 @@ def update_graph(cidades_selecionadas, selected_fuel_radio):
 
     dff = df.copy()
     dff = dff[dff["NOME MUNICIPIO"].isin(nomes_cidades)]
-    dff = dff[dff["PRODUTO"] == selected_fuel_radio]
+    dff = dff[dff["PRODUTO"] == PRODUCTS[int(selected_fuel_radio)]]
 
     px.set_mapbox_access_token(open(".mapbox_token.txt").read())
     fig = px.scatter_mapbox(dff, lat="LATITUDE", lon="LONGITUDE", color_continuous_scale=px.colors.cyclical.IceFire, 
@@ -156,7 +156,6 @@ def update_graph(cidades_selecionadas, selected_fuel_radio):
     dfff = dff.groupby([COLUMNS.MONTH, COLUMNS.CITY])[COLUMNS.MARKET_PRICE_MEAN].apply(list)
 
     fig2 = px.line(dff, x=COLUMNS.MONTH, y=COLUMNS.MARKET_PRICE_MEAN, line_group='MUNICÍPIO', color='MUNICÍPIO')
-    #fig2 = px.line(x, y)
     return container, fig , fig2
 
 # Run
