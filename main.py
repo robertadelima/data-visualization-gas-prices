@@ -101,8 +101,10 @@ data_selection_section = html.Div([
         filters,
     ], className="filters")
 ], className="map_and_filters")
+
 plots_section = html.Div([
-     dcc.Graph(id='market_price_mean_graph', figure={})
+     dcc.Graph(id='market_price_mean_graph', figure={}),
+     dcc.Graph(id='market_margin_graph', figure={})
 ])
 
 # Generate the app
@@ -116,8 +118,8 @@ app.layout = html.Div([
 # Connect the Plotly graphs with Dash Components
 @app.callback(
     [Output(component_id='brazil_map', component_property='figure'),
-     Output(component_id='market_price_mean_graph', component_property='figure')
-     ],
+     Output(component_id='market_price_mean_graph', component_property='figure'),
+     Output(component_id='market_margin_graph', component_property='figure')],
     [Input(component_id='selected_cities', component_property='value'),
     Input(component_id='selected_product', component_property='value')]
 )
@@ -138,7 +140,10 @@ def update_graph(selected_cities, selected_product):
     dfff = dff.groupby([COLUMNS.MONTH, COLUMNS.CITY])[COLUMNS.MARKET_PRICE_MEAN].apply(list)
 
     fig2 = px.line(dff, x=COLUMNS.MONTH, y=COLUMNS.MARKET_PRICE_MEAN, line_group=COLUMNS.CITY, color=COLUMNS.CITY)
-    return fig , fig2
+
+    fig3 = px.line(dff, x=COLUMNS.MONTH, y=COLUMNS.MARKET_MARGIN, line_group=COLUMNS.CITY, color=COLUMNS.CITY)
+
+    return fig , fig2, fig3
 
 # Run
 if __name__ == '__main__':
