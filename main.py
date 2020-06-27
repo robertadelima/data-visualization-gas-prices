@@ -101,18 +101,14 @@ date_slider = html.Div([
 ])
 
 header_section = html.Div([
-    html.Div([
-        html.Img(src=app.get_asset_url('bandeira-sc.jpg'), style={'width':'5%'})
-    ]),
-    html.Div([
-        html.H1('Preços dos Combustíveis - Santa Catarina, Brasil',
-                style={
-                    'text-align': 'left',
-                }),
-        html.H4('Última atualização: 20/06/2020',
-                style={
-                    'text-align': 'left',
-                }),
+    html.Header([
+        html.Div([
+            html.Img(src=app.get_asset_url('bandeira-sc.jpg'), style={'width':'30%'})
+        ], className="flag"),
+        html.Div([
+            html.H1('Preços dos Combustíveis - Santa Catarina, Brasil'),
+            html.H4('Última atualização: 20/06/2020'),
+        ], className="header_title")
     ])
 ])
 data_selection_section = html.Div([
