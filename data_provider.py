@@ -1,11 +1,23 @@
 import pandas as pd
+import locale as lcl
 
 gas_dataset_path = "data/dados-ANP-2013-2020.csv"
 cities_dataset_path = "data/dados-IBGE-municipios.csv"
 
 # Import data
-__gas_data = pd.read_csv(gas_dataset_path, sep=';', encoding='cp1252', decimal=',')
-__cities_data = pd.read_csv(cities_dataset_path, sep=';', encoding='cp1252')
+__gas_data = pd.read_csv(gas_dataset_path,
+                         sep=';', encoding='cp1252', decimal=',')
+__cities_data = pd.read_csv(cities_dataset_path,
+                            sep=';', encoding='cp1252')
+
+def __parse_dates(series):
+    default_locale_str = lcl.getlocale()[0]
+    lcl.setlocale(lcl.LC_ALL, 'pt_BR')
+    parsed_series = pd.to_datetime(series, format='%b/%y')
+    lcl.setlocale(lcl.LC_ALL, default_locale_str)
+    return parsed_series
+
+__gas_data['MÊS'] = __parse_dates(__gas_data['MÊS'])
 
 def __normalize_city_names(series):
     '''Remove accents and upper case'''
