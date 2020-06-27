@@ -4,7 +4,7 @@ gas_dataset_path = "data/dados-ANP-2013-2020.csv"
 cities_dataset_path = "data/dados-IBGE-municipios.csv"
 
 # Import data
-__gas_data = pd.read_csv(gas_dataset_path, sep=';', encoding='cp1252')
+__gas_data = pd.read_csv(gas_dataset_path, sep=';', encoding='cp1252', decimal=',')
 __cities_data = pd.read_csv(cities_dataset_path, sep=';', encoding='cp1252')
 
 def __normalize_city_names(series):
