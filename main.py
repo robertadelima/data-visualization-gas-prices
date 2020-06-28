@@ -30,27 +30,54 @@ cities_map = html.Div([
 ], className='brazil_map')
 
 info_badges = html.Div([
-    html.Div([
-        html.P("Total de municípios selecionados",
-            id="cities_badge_label"),
-        html.H6("4",
-            id="cities_badge_count")
-    ], className="badge"),
-    html.Div([
-        html.P("Total de preços aferidos",
-            id="prices_badge_label"),
-        html.H6("1578",
-            id="prices_badge_count")
-    ], className="badge"),
-    html.Div([
-        html.P("Total de meses analisados",
-            id="months_badge_label"),
-        html.H6("60",
-            id="months_badge_count")
-    ], className="badge"),
-], style={'display': 'flex'})
+    dbc.Row(
+            [
+                dbc.Col(html.Div([
+                    dbc.Card(
+                        [
+                            dbc.CardHeader(dbc.CardImg(src="/assets/places-icon.png", top=True, className='card-icons')),
+                            dbc.CardBody(
+                                [
+                                    html.H6("Total de locais analisados", className="card-title"),
+                                    html.H1("4", id="cities_badge_count", className="card-text"),
+                            ]
+                            )
+                        ]
+                    )
+                ])),
+                dbc.Col(html.Div([
+                    dbc.Card(
+                        [
+                            dbc.CardHeader(dbc.CardImg(src="/assets/price-icon.png", top=True, className='card-icons')),
+                            dbc.CardBody(
+                                [
+                                    html.H6("Total de preços aferidos", className="card-title"),
+                                    html.H1("1578", id="prices_badge_count", className="card-text"),
+                            ]
+                            ),
+                        ],
+                    )
+                ])),
+                dbc.Col(html.Div([
+                    dbc.Card(
+                        [
+                            dbc.CardHeader(dbc.CardImg(src="/assets/months-icon.png", top=True, className='card-icons')),
+                            dbc.CardBody(
+                                [
+                                    html.H6("Total de meses analisados", className="card-title"),
+                                    html.H1("60", id="months_badge_count", className="card-text"),
+                            ]
+                            ),
+                        ],
+                    )
+                ]))
+            ], style={'padding':'20px'}
+        ), 
+],)
+
 filters = html.Div([
-    html.P("Municípios selecionados:",
+    html.Br(),
+    html.H5("Locais selecionados:",
         className="dcc_control"
     ),
     dcc.Dropdown(id="selected_cities",
@@ -59,7 +86,8 @@ filters = html.Div([
             value=['218', '459', '408', '73', '287'],
             className="dcc_control",
             ),
-    html.P("Combustível selecionado",
+    html.Br(),
+    html.H5("Combustível selecionado:",
         className="dcc_control"
     ),
     dcc.RadioItems(
@@ -69,7 +97,9 @@ filters = html.Div([
         labelStyle={"display": "inline-block"},
         className="dcc_control",
     ),
-], style={'display': 'inline-block'})
+], style={'display': 'inline-block', 'padding': '20px'})
+
+
 date_slider = html.Div([
     html.Div([
         html.H2(min(YEARS)),
@@ -88,10 +118,7 @@ date_slider = html.Div([
 header_section = html.Div([
     html.Header([
         html.Div([
-            html.Img(src=app.get_asset_url('bandeira-sc.jpg'), style={'width':'30%'})
-        ], className="header_flag"),
-        html.Div([
-            html.H1('Preços dos Combustíveis - Santa Catarina, Brasil'),
+            html.H1('Preços dos Combustíveis no Brasil', style={'text-align':'center'}),
             html.H4('Última atualização: 20/06/2020'),
         ], className="header_title")
     ])

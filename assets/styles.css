@@ -1,7 +1,3 @@
-.badge {
-    display: 'inline-block'
-}
-
 header {
     display: flex;
 }
@@ -33,4 +29,16 @@ header {
 .badge{
     border: 1px solid red;
     vertical-align: middle;
+}
+
+.card_icons{
+    width: 50%;
+}
+
+.card-title{
+    text-align: center;
+}
+
+.card-text{
+    text-align: center;
 }
