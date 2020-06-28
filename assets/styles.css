@@ -2,9 +2,10 @@ header {
     display: flex;
 }
 
-/*.header_title {
-    border: 1px solid red;
-}*/
+.header_title {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    padding: 5px;
+}
 
 .header_flag {
     text-align: right;
@@ -13,21 +14,22 @@ header {
 }
 
 .map_and_filters {
-    border: 1px solid yellow;
+    /*border: 1px solid yellow;*/
     display: flex;
 }
 
 .filters {
-    border: 1px solid yellowgreen;
+    /*border: 1px solid yellowgreen;*/
     display: inline-block;
 }
 
 .brazil_map {
     margin: 0px;
+    width: 60%;
 }
 
 .badge{
-    border: 1px solid red;
+    /*border: 1px solid red;*/
     vertical-align: middle;
 }
 

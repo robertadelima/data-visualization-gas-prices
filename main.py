@@ -38,7 +38,7 @@ info_badges = html.Div([
                             dbc.CardHeader(dbc.CardImg(src="/assets/places-icon.png", top=True, className='card-icons')),
                             dbc.CardBody(
                                 [
-                                    html.H6("Total de locais analisados", className="card-title"),
+                                    html.H6("Locais escolhidos", className="card-title"),
                                     html.H1("4", id="cities_badge_count", className="card-text"),
                             ]
                             )
@@ -51,7 +51,7 @@ info_badges = html.Div([
                             dbc.CardHeader(dbc.CardImg(src="/assets/price-icon.png", top=True, className='card-icons')),
                             dbc.CardBody(
                                 [
-                                    html.H6("Total de preços aferidos", className="card-title"),
+                                    html.H6("Preços aferidos", className="card-title"),
                                     html.H1("1578", id="prices_badge_count", className="card-text"),
                             ]
                             ),
@@ -64,7 +64,7 @@ info_badges = html.Div([
                             dbc.CardHeader(dbc.CardImg(src="/assets/months-icon.png", top=True, className='card-icons')),
                             dbc.CardBody(
                                 [
-                                    html.H6("Total de meses analisados", className="card-title"),
+                                    html.H6("Meses analisados", className="card-title"),
                                     html.H1("60", id="months_badge_count", className="card-text"),
                             ]
                             ),
@@ -119,7 +119,7 @@ header_section = html.Div([
     html.Header([
         html.Div([
             html.H1('Preços dos Combustíveis no Brasil', style={'text-align':'center'}),
-            html.H4('Última atualização: 20/06/2020'),
+            html.H6('Última atualização: 20/06/2020'),
         ], className="header_title")
     ])
 ])
@@ -150,7 +150,7 @@ def build_brazil_map_figure(filtered_dataset):
                              size=COLUMNS.MARKET_PRICE_MEAN,
                              width=800, height=600, zoom=3, mapbox_style="open-street-map",
                              center=dict(lat=-11.619893, lon=-56.408030),
-                             color_continuous_scale=px.colors.cyclical.IceFire)
+                             color_continuous_scale=px.colors.cyclical.IceFire,)
 
 def build_market_price_plot(filtered_dataset):
     return px.line(filtered_dataset,
