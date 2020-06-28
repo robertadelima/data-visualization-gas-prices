@@ -39,7 +39,7 @@ info_badges = html.Div([
                             dbc.CardBody(
                                 [
                                     html.H6("Locais escolhidos", className="card-title"),
-                                    html.H1("4", id="cities_badge_count", className="card-text"),
+                                    html.H1(id="places_badge_count", className="card-text"),
                             ]
                             )
                         ]
@@ -52,7 +52,7 @@ info_badges = html.Div([
                             dbc.CardBody(
                                 [
                                     html.H6("Preços aferidos", className="card-title"),
-                                    html.H1("1578", id="prices_badge_count", className="card-text"),
+                                    html.H1(id="prices_badge_count", className="card-text"),
                             ]
                             ),
                         ],
@@ -65,7 +65,7 @@ info_badges = html.Div([
                             dbc.CardBody(
                                 [
                                     html.H6("Meses analisados", className="card-title"),
-                                    html.H1("60", id="months_badge_count", className="card-text"),
+                                    html.H1(id="months_badge_count", className="card-text"),
                             ]
                             ),
                         ],
@@ -169,7 +169,10 @@ def build_market_margin_plot(filtered_dataset):
 @app.callback(
     [Output(component_id='brazil_map', component_property='figure'),
      Output(component_id='market_price_plot', component_property='figure'),
-     Output(component_id='market_margin_plot', component_property='figure')],
+     Output(component_id='market_margin_plot', component_property='figure'),
+     Output(component_id='places_badge_count', component_property='children'),
+     Output(component_id='prices_badge_count', component_property='children'),
+     Output(component_id='months_badge_count', component_property='children')],
     [Input(component_id='selected_cities', component_property='value'),
     Input(component_id='selected_product', component_property='value'),
     Input(component_id='selected_years', component_property='value')
@@ -198,9 +201,16 @@ def update_plots_from_filters(selected_cities, selected_product, selected_year_r
     market_price_plot_figure = build_market_price_plot(filtered_dataset)
     market_margin_plot_figure = build_market_margin_plot(filtered_dataset)
 
+    places_badge_count = 22
+    prices_badge_count = 33
+    months_badge_count = 44
+
     return (brazil_map_figure,
             market_price_plot_figure,
-            market_price_plot_figure)
+            market_price_plot_figure,
+            places_badge_count,
+            prices_badge_count,
+            months_badge_count)
 
 # Run
 if __name__ == '__main__':
