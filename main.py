@@ -26,7 +26,7 @@ def options_from_dict(dictionary):
 
 cities_map = html.Div([
     dcc.Graph(id='brazil_map', figure={}),
-], className='map')
+], className='brazil_map')
 
 info_badges = html.Div([
     html.Div([
@@ -47,10 +47,7 @@ info_badges = html.Div([
         html.H6("60",
             id="months_badge_count")
     ], className="badge"),
-],style={'display': 'flex'}
-)
-county_options = [
-]
+], style={'display': 'flex'})
 filters = html.Div([
     html.P("Municípios selecionados:",
         className="dcc_control"
@@ -71,8 +68,7 @@ filters = html.Div([
         labelStyle={"display": "inline-block"},
         className="dcc_control",
     ),
-],style={'display': 'inline-block'}
-)
+], style={'display': 'inline-block'})
 date_slider = html.Div([
     html.H2("2013"),
     dcc.RangeSlider(
@@ -89,7 +85,7 @@ header_section = html.Div([
     html.Header([
         html.Div([
             html.Img(src=app.get_asset_url('bandeira-sc.jpg'), style={'width':'30%'})
-        ], className="flag"),
+        ], className="header_flag"),
         html.Div([
             html.H1('Preços dos Combustíveis - Santa Catarina, Brasil'),
             html.H4('Última atualização: 20/06/2020'),

@@ -1,32 +1,32 @@
-.badge{
+.badge {
     display: 'inline-block'
 }
 
-header{
+header {
     display: flex;
 }
 
-/*.header_title{
+/*.header_title {
     border: 1px solid red;
 }*/
 
-.flag{
+.header_flag {
     text-align: right;
     padding-right: 10px;
     vertical-align: middle;
 }
 
-.map_and_filters{
+.map_and_filters {
     border: 1px solid yellow;
     display: flex;
 }
 
-.filters{
+.filters {
     border: 1px solid yellowgreen;
     display: inline-block;
 }
 
-.map{
+.brazil_map {
     margin: 0px;
 }
 
