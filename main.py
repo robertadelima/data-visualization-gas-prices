@@ -115,7 +115,29 @@ app.layout = html.Div([
     plots_section,
 ])
 
-# Connect the Plotly graphs with Dash Components
+def build_brazil_map_figure(filtered_dataset):
+    px.set_mapbox_access_token(open(".mapbox_token.txt").read())
+    return px.scatter_mapbox(filtered_dataset,
+                             lat=COLUMNS.LATITUDE, lon=COLUMNS.LONGITUDE,
+                             size=COLUMNS.MARKET_PRICE_MEAN,
+                             width=800, height=600, zoom=3, mapbox_style="open-street-map",
+                             center=dict(lat=-11.619893, lon=-56.408030),
+                             color_continuous_scale=px.colors.cyclical.IceFire)
+
+def build_market_price_graph(filtered_dataset):
+    return px.line(filtered_dataset,
+                   x=COLUMNS.MONTH,
+                   y=COLUMNS.MARKET_PRICE_MEAN,
+                   line_group=COLUMNS.CITY,
+                   color=COLUMNS.CITY)
+
+def build_market_margin_graph(filtered_dataset):
+    return px.line(filtered_dataset,
+                   x=COLUMNS.MONTH,
+                   y=COLUMNS.MARKET_MARGIN,
+                   line_group=COLUMNS.CITY,
+                   color=COLUMNS.CITY)
+
 @app.callback(
     [Output(component_id='brazil_map', component_property='figure'),
      Output(component_id='market_price_mean_graph', component_property='figure'),
@@ -123,27 +145,26 @@ app.layout = html.Div([
     [Input(component_id='selected_cities', component_property='value'),
     Input(component_id='selected_product', component_property='value')]
 )
-    # Plotly Express
-def update_graph(selected_cities, selected_product):
-    if not isinstance(selected_cities, list): selected_cities = [selected_cities]
-    nomes_cidades = [CITIES[int(cidade)] for cidade in selected_cities]
+def update_plots_from_filters(selected_cities, selected_product):
 
-    dff = df.copy()
-    dff = dff[dff[COLUMNS.CITY_NAME].isin(nomes_cidades)]
-    dff = dff[dff[COLUMNS.PRODUCT] == PRODUCTS[int(selected_product)]]
+    if type(selected_cities) is not list:
+        selected_cities = [selected_cities]
 
-    px.set_mapbox_access_token(open(".mapbox_token.txt").read())
-    fig = px.scatter_mapbox(dff, lat=COLUMNS.LATITUDE, lon=COLUMNS.LONGITUDE, color_continuous_scale=px.colors.cyclical.IceFire, 
-        zoom=3, size=COLUMNS.MARKET_PRICE_MEAN, width=800, height=600, mapbox_style="open-street-map",
-        center=dict(lat=-11.619893, lon=-56.408030))
-    
-    dfff = dff.groupby([COLUMNS.MONTH, COLUMNS.CITY])[COLUMNS.MARKET_PRICE_MEAN].apply(list)
+    selected_product_name = PRODUCTS[int(selected_product)]
+    product_filter = DATASET[COLUMNS.PRODUCT] == selected_product_name
 
-    fig2 = px.line(dff, x=COLUMNS.MONTH, y=COLUMNS.MARKET_PRICE_MEAN, line_group=COLUMNS.CITY, color=COLUMNS.CITY)
+    selected_cities_names = [CITIES[int(city)] for city in selected_cities]
+    cities_filter = DATASET[COLUMNS.CITY_NAME].isin(selected_cities_names)
 
-    fig3 = px.line(dff, x=COLUMNS.MONTH, y=COLUMNS.MARKET_MARGIN, line_group=COLUMNS.CITY, color=COLUMNS.CITY)
+    filtered_dataset = DATASET[product_filter & cities_filter]
 
-    return fig , fig2, fig3
+    map_figure = build_brazil_map_figure(filtered_dataset)
+    market_price_graph_figure = build_market_price_graph(filtered_dataset)
+    market_margin_graph_figure = build_market_margin_graph(filtered_dataset)
+
+    return (map_figure,
+            market_price_graph_figure,
+            market_price_graph_figure)
 
 # Run
 if __name__ == '__main__':

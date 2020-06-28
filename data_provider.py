@@ -26,7 +26,6 @@ def __normalize_city_names(series):
                  .str.decode('utf-8')\
                  .str.upper()
 
-
 def __merge_city_data(gas_data, cities_data):
     city_names = cities_data['NOME MUNICIPIO']
     cities_data['NOME MUNICIPIO'] = __normalize_city_names(city_names)
@@ -69,3 +68,4 @@ __df = DATASET
 CITIES = pd.Series(__df[COLUMNS.CITY].unique()).to_dict()
 PRODUCTS = pd.Series(__df[COLUMNS.PRODUCT].unique()).to_dict()
 STATES = pd.Series(__df[COLUMNS.STATE].unique()).to_dict()
+
