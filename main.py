@@ -134,7 +134,15 @@ data_selection_section = html.Div([
 plots_section = html.Div([
      dcc.Graph(id='market_price_plot', figure={}),
      dcc.Graph(id='market_margin_plot', figure={}),
-     dcc.Graph(id='std_deviation_plot', figure={}, style={'width':'50%'}),
+     dbc.Row(
+            [
+                dbc.Col(html.Div([
+                            dcc.Graph(id='market_price_std_deviation_plot', figure={}),
+                ])),
+                dbc.Col(html.Div([
+                            dcc.Graph(id='market_price_coef_var_plot', figure={}),
+                ]))
+            ])
 ])
 
 # Generate the app
@@ -167,10 +175,17 @@ def build_market_margin_plot(filtered_dataset):
                    line_group=COLUMNS.CITY,
                    color=COLUMNS.CITY)
 
-def build_std_deviation_plot(filtered_dataset):
+def build_market_price_std_deviation_plot(filtered_dataset):
     return px.bar(filtered_dataset,
                    x=COLUMNS.CITY,
                    y=COLUMNS.MARKET_PRICE_STD,
+                   barmode='group',
+                   color='ANO')
+
+def build_market_price_var_coef_plot(filtered_dataset):
+    return px.bar(filtered_dataset,
+                   x=COLUMNS.CITY,
+                   y=COLUMNS.MARKET_PRICE_VAR_COEF,
                    barmode='group',
                    color='ANO')
 
@@ -178,7 +193,8 @@ def build_std_deviation_plot(filtered_dataset):
     [Output(component_id='brazil_map', component_property='figure'),
      Output(component_id='market_price_plot', component_property='figure'),
      Output(component_id='market_margin_plot', component_property='figure'),
-     Output(component_id='std_deviation_plot', component_property='figure'),
+     Output(component_id='market_price_std_deviation_plot', component_property='figure'),
+     Output(component_id='market_price_coef_var_plot', component_property='figure'),
      Output(component_id='places_badge_count', component_property='children'),
      Output(component_id='prices_badge_count', component_property='children'),
      Output(component_id='months_badge_count', component_property='children')],
@@ -215,7 +231,8 @@ def update_plots_from_filters(selected_cities, selected_product, selected_year_r
     brazil_map_figure = build_brazil_map_figure(filtered_dataset)
     market_price_plot_figure = build_market_price_plot(filtered_dataset)
     market_margin_plot_figure = build_market_margin_plot(filtered_dataset)
-    std_deviation_plot = build_std_deviation_plot(filtered_dataset_grouped_by_year)
+    market_price_std_deviation_plot = build_market_price_std_deviation_plot(filtered_dataset_grouped_by_year)
+    market_price_var_coef_plot = build_market_price_var_coef_plot(filtered_dataset_grouped_by_year)
 
     places_badge_count = len(selected_cities)
     prices_badge_count = filtered_dataset[COLUMNS.GAS_STATION_COUNT].sum()
@@ -224,7 +241,8 @@ def update_plots_from_filters(selected_cities, selected_product, selected_year_r
     return (brazil_map_figure,
             market_price_plot_figure,
             market_price_plot_figure,
-            std_deviation_plot,
+            market_price_std_deviation_plot,
+            market_price_var_coef_plot,
             places_badge_count,
             prices_badge_count,
             months_badge_count)
