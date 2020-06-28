@@ -160,6 +160,7 @@ def build_brazil_map_figure(filtered_dataset):
                              width=700, height=550, zoom=3, mapbox_style="open-street-map",
                              center=dict(lat=-11.619893, lon=-56.408030),
                              color_continuous_scale=px.colors.cyclical.IceFire,
+                             color=COLUMNS.MARKET_PRICE_MEAN,
                              title="Preço Médio do Combustível nas Revendas")
 
 def build_market_price_plot(filtered_dataset):
