@@ -103,8 +103,8 @@ data_selection_section = html.Div([
 ], className="map_and_filters")
 
 plots_section = html.Div([
-     dcc.Graph(id='market_price_mean_graph', figure={}),
-     dcc.Graph(id='market_margin_graph', figure={})
+     dcc.Graph(id='market_price_plot', figure={}),
+     dcc.Graph(id='market_margin_plot', figure={})
 ])
 
 # Generate the app
@@ -124,14 +124,14 @@ def build_brazil_map_figure(filtered_dataset):
                              center=dict(lat=-11.619893, lon=-56.408030),
                              color_continuous_scale=px.colors.cyclical.IceFire)
 
-def build_market_price_graph(filtered_dataset):
+def build_market_price_plot(filtered_dataset):
     return px.line(filtered_dataset,
                    x=COLUMNS.MONTH,
                    y=COLUMNS.MARKET_PRICE_MEAN,
                    line_group=COLUMNS.CITY,
                    color=COLUMNS.CITY)
 
-def build_market_margin_graph(filtered_dataset):
+def build_market_margin_plot(filtered_dataset):
     return px.line(filtered_dataset,
                    x=COLUMNS.MONTH,
                    y=COLUMNS.MARKET_MARGIN,
@@ -140,8 +140,8 @@ def build_market_margin_graph(filtered_dataset):
 
 @app.callback(
     [Output(component_id='brazil_map', component_property='figure'),
-     Output(component_id='market_price_mean_graph', component_property='figure'),
-     Output(component_id='market_margin_graph', component_property='figure')],
+     Output(component_id='market_price_plot', component_property='figure'),
+     Output(component_id='market_margin_plot', component_property='figure')],
     [Input(component_id='selected_cities', component_property='value'),
     Input(component_id='selected_product', component_property='value')]
 )
@@ -158,13 +158,13 @@ def update_plots_from_filters(selected_cities, selected_product):
 
     filtered_dataset = DATASET[product_filter & cities_filter]
 
-    map_figure = build_brazil_map_figure(filtered_dataset)
-    market_price_graph_figure = build_market_price_graph(filtered_dataset)
-    market_margin_graph_figure = build_market_margin_graph(filtered_dataset)
+    brazil_map_figure = build_brazil_map_figure(filtered_dataset)
+    market_price_plot_figure = build_market_price_plot(filtered_dataset)
+    market_margin_plot_figure = build_market_margin_plot(filtered_dataset)
 
-    return (map_figure,
-            market_price_graph_figure,
-            market_price_graph_figure)
+    return (brazil_map_figure,
+            market_price_plot_figure,
+            market_price_plot_figure)
 
 # Run
 if __name__ == '__main__':
