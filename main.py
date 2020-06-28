@@ -159,14 +159,16 @@ def build_brazil_map_figure(filtered_dataset):
                              size=COLUMNS.MARKET_PRICE_MEAN,
                              width=700, height=550, zoom=3, mapbox_style="open-street-map",
                              center=dict(lat=-11.619893, lon=-56.408030),
-                             color_continuous_scale=px.colors.cyclical.IceFire,)
+                             color_continuous_scale=px.colors.cyclical.IceFire,
+                             title="Preço Médio do Combustível nas Revendas")
 
 def build_market_price_plot(filtered_dataset):
     return px.line(filtered_dataset,
                    x=COLUMNS.MONTH,
                    y=COLUMNS.MARKET_PRICE_MEAN,
                    line_group=COLUMNS.CITY,
-                   color=COLUMNS.CITY)
+                   color=COLUMNS.CITY,
+                   title="Margem Média das Revendas")
 
 def build_market_margin_plot(filtered_dataset):
     return px.line(filtered_dataset,
@@ -180,14 +182,16 @@ def build_market_price_std_deviation_plot(filtered_dataset):
                    x=COLUMNS.CITY,
                    y=COLUMNS.MARKET_PRICE_STD,
                    barmode='group',
-                   color='ANO')
+                   color='ANO',
+                   title='Desvio Padrão Médio dos Preços nas Revendas')
 
 def build_market_price_var_coef_plot(filtered_dataset):
     return px.bar(filtered_dataset,
                    x=COLUMNS.CITY,
                    y=COLUMNS.MARKET_PRICE_VAR_COEF,
                    barmode='group',
-                   color='ANO')
+                   color='ANO',
+                   title='Coeficiente de Variação Médio dos Preços nas Revendas')
 
 @app.callback(
     [Output(component_id='brazil_map', component_property='figure'),
