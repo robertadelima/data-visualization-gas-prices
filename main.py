@@ -9,9 +9,11 @@ from dash.dependencies import Input, Output
 
 from data_provider import *
 
-df = DATASET
-
 app = dash.Dash(__name__)
+
+with open(".mapbox_token.txt") as map_token_file:
+    token = map_token_file.read()
+    px.set_mapbox_access_token(token)
 
 # --------------------
 
@@ -116,7 +118,6 @@ app.layout = html.Div([
 ])
 
 def build_brazil_map_figure(filtered_dataset):
-    px.set_mapbox_access_token(open(".mapbox_token.txt").read())
     return px.scatter_mapbox(filtered_dataset,
                              lat=COLUMNS.LATITUDE, lon=COLUMNS.LONGITUDE,
                              size=COLUMNS.MARKET_PRICE_MEAN,
