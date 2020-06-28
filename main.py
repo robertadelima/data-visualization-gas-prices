@@ -172,7 +172,7 @@ def build_std_deviation_plot(filtered_dataset):
                    x=COLUMNS.CITY,
                    y=COLUMNS.MARKET_PRICE_STD,
                    barmode='group',
-                   color=COLUMNS.MONTH)
+                   color='ANO')
 
 @app.callback(
     [Output(component_id='brazil_map', component_property='figure'),
@@ -210,7 +210,7 @@ def update_plots_from_filters(selected_cities, selected_product, selected_year_r
                                         filtered_dataset[COLUMNS.CITY], 
                                         filtered_dataset[COLUMNS.MONTH].dt.year]).mean()
     filtered_dataset_grouped_by_year = filtered_dataset_grouped_by_year.reset_index()
-    print(filtered_dataset_grouped_by_year)
+    filtered_dataset_grouped_by_year.rename(columns={'MÊS': 'ANO'}, inplace=True)
 
     brazil_map_figure = build_brazil_map_figure(filtered_dataset)
     market_price_plot_figure = build_market_price_plot(filtered_dataset)
