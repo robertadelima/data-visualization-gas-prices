@@ -39,7 +39,7 @@ info_badges = html.Div([
                             dbc.CardBody(
                                 [
                                     html.H6("Locais escolhidos", className="card-title"),
-                                    html.H1(id="places_badge_count", className="card-text"),
+                                    html.H2(id="places_badge_count", className="card-text"),
                             ]
                             )
                         ]
@@ -52,7 +52,7 @@ info_badges = html.Div([
                             dbc.CardBody(
                                 [
                                     html.H6("Preços aferidos", className="card-title"),
-                                    html.H1(id="prices_badge_count", className="card-text"),
+                                    html.H2(id="prices_badge_count", className="card-text"),
                             ]
                             ),
                         ],
@@ -65,7 +65,7 @@ info_badges = html.Div([
                             dbc.CardBody(
                                 [
                                     html.H6("Meses analisados", className="card-title"),
-                                    html.H1(id="months_badge_count", className="card-text"),
+                                    html.H2(id="months_badge_count", className="card-text"),
                             ]
                             ),
                         ],
@@ -118,10 +118,10 @@ date_slider = html.Div([
 header_section = html.Div([
     html.Header([
         html.Div([
-            html.H1('Preços dos Combustíveis no Brasil', style={'text-align':'center'}),
+            html.H1('Preços dos Combustíveis no Brasil'),
             html.H6('Última atualização: 20/06/2020'),
         ], className="header_title")
-    ])
+    ], className="header_div")
 ])
 data_selection_section = html.Div([
     cities_map,
@@ -148,7 +148,7 @@ def build_brazil_map_figure(filtered_dataset):
     return px.scatter_mapbox(filtered_dataset,
                              lat=COLUMNS.LATITUDE, lon=COLUMNS.LONGITUDE,
                              size=COLUMNS.MARKET_PRICE_MEAN,
-                             width=800, height=600, zoom=3, mapbox_style="open-street-map",
+                             width=700, height=550, zoom=3, mapbox_style="open-street-map",
                              center=dict(lat=-11.619893, lon=-56.408030),
                              color_continuous_scale=px.colors.cyclical.IceFire,)
 
@@ -201,8 +201,8 @@ def update_plots_from_filters(selected_cities, selected_product, selected_year_r
     market_price_plot_figure = build_market_price_plot(filtered_dataset)
     market_margin_plot_figure = build_market_margin_plot(filtered_dataset)
 
-    places_badge_count = 22
-    prices_badge_count = 33
+    places_badge_count = len(selected_cities)
+    prices_badge_count = filtered_dataset[COLUMNS.GAS_STATION_COUNT].sum()
     months_badge_count = 44
 
     return (brazil_map_figure,
