@@ -58,7 +58,7 @@ filters = html.Div([
     dcc.Dropdown(id="selected_cities",
             options=options_from_dict(CITIES),
             multi=True,
-            value=1,
+            value=['218', '459', '408', '73', '287'],
             className="dcc_control",
             ),
     html.P("Combustível selecionado",
@@ -67,7 +67,7 @@ filters = html.Div([
     dcc.RadioItems(
         id="selected_product",
         options=options_from_dict(PRODUCTS),
-        value=0,
+        value=3,
         labelStyle={"display": "inline-block"},
         className="dcc_control",
     ),
