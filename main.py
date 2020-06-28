@@ -203,7 +203,7 @@ def update_plots_from_filters(selected_cities, selected_product, selected_year_r
 
     places_badge_count = len(selected_cities)
     prices_badge_count = filtered_dataset[COLUMNS.GAS_STATION_COUNT].sum()
-    months_badge_count = 44
+    months_badge_count = len(filtered_dataset[COLUMNS.MONTH].unique())
 
     return (brazil_map_figure,
             market_price_plot_figure,
