@@ -68,4 +68,4 @@ __df = DATASET
 CITIES = pd.Series(__df[COLUMNS.CITY].unique()).to_dict()
 PRODUCTS = pd.Series(__df[COLUMNS.PRODUCT].unique()).to_dict()
 STATES = pd.Series(__df[COLUMNS.STATE].unique()).to_dict()
-
+YEARS = {year: str(year) for year in __df[COLUMNS.MONTH].dt.year.unique()}

@@ -70,15 +70,18 @@ filters = html.Div([
     ),
 ], style={'display': 'inline-block'})
 date_slider = html.Div([
-    html.H2("2013"),
+    html.Div([
+        html.H2(min(YEARS)),
+        html.H2(max(YEARS),
+                style={'float': 'right', 'vertical-align': 'top'}),
+    ]),
     dcc.RangeSlider(
         id="year_slider",
-        min=2013,
-        max=2020,
-        value=[2013, 2020],
+        min=min(YEARS),
+        max=max(YEARS),
+        value=(min(YEARS), max(YEARS)),
         className="dcc_control",
     ),
-    html.H2("2020"),
 ])
 
 header_section = html.Div([
