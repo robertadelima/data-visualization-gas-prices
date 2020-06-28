@@ -76,7 +76,7 @@ date_slider = html.Div([
                 style={'float': 'right', 'vertical-align': 'top'}),
     ]),
     dcc.RangeSlider(
-        id="year_slider",
+        id="selected_years",
         min=min(YEARS),
         max=max(YEARS),
         value=(min(YEARS), max(YEARS)),
@@ -143,9 +143,11 @@ def build_market_margin_plot(filtered_dataset):
      Output(component_id='market_price_plot', component_property='figure'),
      Output(component_id='market_margin_plot', component_property='figure')],
     [Input(component_id='selected_cities', component_property='value'),
-    Input(component_id='selected_product', component_property='value')]
+    Input(component_id='selected_product', component_property='value'),
+    Input(component_id='selected_years', component_property='value')
+    ]
 )
-def update_plots_from_filters(selected_cities, selected_product):
+def update_plots_from_filters(selected_cities, selected_product, selected_year_range):
 
     if type(selected_cities) is not list:
         selected_cities = [selected_cities]
@@ -156,7 +158,13 @@ def update_plots_from_filters(selected_cities, selected_product):
     selected_cities_names = [CITIES[int(city)] for city in selected_cities]
     cities_filter = DATASET[COLUMNS.CITY_NAME].isin(selected_cities_names)
 
-    filtered_dataset = DATASET[product_filter & cities_filter]
+    dataset_years = DATASET[COLUMNS.MONTH].dt.year
+    years_filter = ((dataset_years >= selected_year_range[0]) &
+                    (dataset_years <= selected_year_range[1]))
+
+    filtered_dataset = DATASET[product_filter &
+                               cities_filter &
+                               years_filter]
 
     brazil_map_figure = build_brazil_map_figure(filtered_dataset)
     market_price_plot_figure = build_market_price_plot(filtered_dataset)
