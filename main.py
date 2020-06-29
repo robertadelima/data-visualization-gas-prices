@@ -18,10 +18,10 @@ with open(".mapbox_token.txt") as map_token_file:
 
 # --------------------
 
-def options_from_dict(dictionary):
-    return [{ "label": str(dictionary[key]),
-              "value": str(key) }
-            for key in dictionary]
+def options_from_iterable(iterable):
+    return [{ "label": str(option),
+              "value": str(option)}
+            for option in iterable]
 
 # --------------------
 
@@ -81,9 +81,9 @@ filters = html.Div([
         className="dcc_control"
     ),
     dcc.Dropdown(id="selected_cities",
-            options=options_from_dict(CITIES),
+            options=options_from_iterable(CITIES),
             multi=True,
-            value=['218', '459', '408', '73', '287'],
+            value=['ITAJAI', 'SAO PAULO'],
             className="dcc_control",
             ),
     html.Br(),
@@ -92,8 +92,8 @@ filters = html.Div([
     ),
     dcc.RadioItems(
         id="selected_product",
-        options=options_from_dict(PRODUCTS),
-        value=3,
+        options=options_from_iterable(PRODUCTS),
+        value='GASOLINA COMUM',
         labelStyle={"display": "inline-block"},
         className="dcc_control",
     ),
@@ -213,11 +213,8 @@ def update_plots_from_filters(selected_cities, selected_product, selected_year_r
     if type(selected_cities) is not list:
         selected_cities = [selected_cities]
 
-    selected_product_name = PRODUCTS[int(selected_product)]
-    product_filter = DATASET[COLUMNS.PRODUCT] == selected_product_name
-
-    selected_cities_names = [CITIES[int(city)] for city in selected_cities]
-    cities_filter = DATASET[COLUMNS.CITY_NAME].isin(selected_cities_names)
+    product_filter = DATASET[COLUMNS.PRODUCT] == selected_product
+    cities_filter = DATASET[COLUMNS.CITY_NAME].isin(selected_cities)
 
     dataset_years = DATASET[COLUMNS.MONTH].dt.year
     years_filter = ((dataset_years >= selected_year_range[0]) &
@@ -226,9 +223,9 @@ def update_plots_from_filters(selected_cities, selected_product, selected_year_r
     filtered_dataset = DATASET[product_filter &
                                cities_filter &
                                years_filter]
-    
+
     filtered_dataset_grouped_by_year = filtered_dataset.groupby([
-                                        filtered_dataset[COLUMNS.CITY], 
+                                        filtered_dataset[COLUMNS.CITY],
                                         filtered_dataset[COLUMNS.MONTH].dt.year]).mean()
     filtered_dataset_grouped_by_year = filtered_dataset_grouped_by_year.reset_index()
     filtered_dataset_grouped_by_year.rename(columns={'MÊS': 'ANO'}, inplace=True)
