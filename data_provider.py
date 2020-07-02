@@ -10,38 +10,14 @@ __gas_data = pd.read_csv(gas_dataset_path,
 __cities_data = pd.read_csv(cities_dataset_path,
                             sep=';', encoding='cp1252')
 
-def __parse_dates(series):
-    default_locale_str = lcl.getlocale()[0]
-    lcl.setlocale(lcl.LC_ALL, 'pt_BR')
-    parsed_series = pd.to_datetime(series, format='%b/%y')
-    lcl.setlocale(lcl.LC_ALL, default_locale_str)
-    return parsed_series
-
-__gas_data['MÊS'] = __parse_dates(__gas_data['MÊS'])
-
-def __normalize_city_names(series):
-    '''Remove accents and upper case'''
-    return series.str.normalize('NFKD')\
-                 .str.encode('ascii', errors='ignore')\
-                 .str.decode('utf-8')\
-                 .str.upper()
-
-def __merge_city_data(gas_data, cities_data):
-    city_names = cities_data['NOME MUNICIPIO']
-    cities_data['NOME MUNICIPIO'] = __normalize_city_names(city_names)
-
-    return pd.merge(gas_data,            cities_data,
-                    left_on='MUNICÍPIO', right_on='NOME MUNICIPIO',
-                    how='left')
-
-DATASET = __merge_city_data(__gas_data, __cities_data)
-
+# Define aliases for quickly accessing columns
 class COLUMNS:
     MONTH = 'MÊS'
     PRODUCT = 'PRODUTO'
     CITY = 'MUNICÍPIO'
     REGION = 'REGIÃO'
     STATE = 'ESTADO'
+    UF = 'UF'
     CITY_NAME = 'NOME MUNICIPIO'
     GAS_STATION_COUNT = 'NÚMERO DE POSTOS PESQUISADOS'
     UNIT = 'UNIDADE DE MEDIDA'
@@ -63,9 +39,40 @@ class COLUMNS:
     LATITUDE = 'LATITUDE'
     LONGITUDE = 'LONGITUDE'
 
-__df = DATASET
+def __parse_dates(series):
+    default_locale_str = lcl.getlocale()[0]
+    lcl.setlocale(lcl.LC_ALL, 'pt_BR')
+    parsed_series = pd.to_datetime(series, format='%b/%y')
+    lcl.setlocale(lcl.LC_ALL, default_locale_str)
+    return parsed_series
 
-CITIES = list(__df[COLUMNS.CITY].unique())
+def __normalize_city_names(series):
+    '''Remove accents and upper case'''
+    return series.str.normalize('NFKD')\
+                 .str.encode('ascii', errors='ignore')\
+                 .str.decode('utf-8')\
+                 .str.upper()
+
+def __merge_city_data(gas_data, cities_data):
+    city_names = cities_data['NOME MUNICIPIO']
+    cities_data['NOME MUNICIPIO'] = __normalize_city_names(city_names)
+
+    return pd.merge(gas_data,            cities_data,
+                    left_on='MUNICÍPIO', right_on='NOME MUNICIPIO',
+                    how='left')
+
+
+__gas_data[COLUMNS.MONTH] = __parse_dates(__gas_data[COLUMNS.MONTH])
+__df = __merge_city_data(__gas_data, __cities_data)
+
+DATASET = __df
+
 PRODUCTS = list(__df[COLUMNS.PRODUCT].unique())
-STATES = list(__df[COLUMNS.STATE].unique())
 YEARS = list(__df[COLUMNS.MONTH].dt.year.unique())
+
+REGIONS = list(__df[COLUMNS.REGION].unique())
+STATES = list(__df[COLUMNS.STATE].unique())
+CITIES = list((__df[COLUMNS.CITY] + ' (' + __df[COLUMNS.UF] + ')').unique())
+
+PLACES = REGIONS + STATES + CITIES
+
