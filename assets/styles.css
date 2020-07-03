@@ -49,3 +49,7 @@ header {
 .card-text{
     text-align: center;
 }
+
+.slider_control{
+    padding: 0px 20px 0px 20px;
+}

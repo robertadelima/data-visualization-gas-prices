@@ -105,6 +105,9 @@ filters = html.Div([
 
 
 date_slider = html.Div([
+    html.Div([	
+        html.H5("Período selecionado:"),	
+    ]),
     dcc.RangeSlider(
         id="selected_years",
         min=min(YEARS),
@@ -113,7 +116,7 @@ date_slider = html.Div([
         marks=values_from_iterable(YEARS),
         className="dcc_control",
     ),
-])
+], className="slider_control")
 
 header_section = html.Div([
     html.Header([
