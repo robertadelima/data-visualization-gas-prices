@@ -1,5 +1,14 @@
+body{
+    /*border: 3px solid red;*/
+    max-width: 1920px;
+    min-width: 1080px;
+    justify-content: center;
+}
+
 header {
     display: flex;
+    background-color:cadetblue;
+    /*border: 3px solid green;*/
 }
 
 .header_title {
@@ -24,13 +33,16 @@ header {
 }
 
 .filters {
-    /*border: 1px solid yellowgreen;*/
+    width: 40%;
+    /*border: 3px solid blue;*/
     display: inline-block;
 }
 
 .brazil_map {
-    margin: 0px;
     width: 60%;
+    /*border: 3px solid yellow;*/
+    margin: 0px;
+    /*width: 60%;*/
 }
 
 .badge{
