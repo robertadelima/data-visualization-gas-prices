@@ -55,7 +55,7 @@ info_badges = html.Div([
                             dbc.CardHeader(dbc.CardImg(src="/assets/price-icon.png", top=True, className='card-icons')),
                             dbc.CardBody(
                                 [
-                                    html.H6("Preços aferidos", className="card-title"),
+                                    html.H6("Preços analisados", className="card-title"),
                                     html.H2(id="prices_badge_count", className="card-text"),
                             ]
                             ),
@@ -68,11 +68,11 @@ info_badges = html.Div([
                             dbc.CardHeader(dbc.CardImg(src="/assets/months-icon.png", top=True, className='card-icons')),
                             dbc.CardBody(
                                 [
-                                    html.H6("Meses analisados", className="card-title"),
+                                    html.H6("Meses selecionados", className="card-title"),
                                     html.H2(id="months_badge_count", className="card-text"),
                             ]
                             ),
-                        ],
+                        ], className="card"
                     )
                 ]))
             ], className="cards-row",
