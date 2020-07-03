@@ -75,7 +75,7 @@ info_badges = html.Div([
                         ],
                     )
                 ]))
-            ], style={'padding':'20px'}
+            ], className="cards-row",
         ), 
 ],)
 
@@ -98,10 +98,9 @@ filters = html.Div([
         id="selected_product",
         options=options_from_iterable(PRODUCTS),
         value='GASOLINA COMUM',
-        labelStyle={"display": "inline-block"},
         className="dcc_control",
     ),
-], style={'display': 'inline-block', 'padding': '20px'})
+], className='filters-div')
 
 
 date_slider = html.Div([
@@ -160,8 +159,8 @@ def build_brazil_map_figure(filtered_dataset):
     return px.scatter_mapbox(filtered_dataset,
                              lat=COLUMNS.LATITUDE, lon=COLUMNS.LONGITUDE,
                              size=COLUMNS.MARKET_PRICE_MEAN,
-                             #width=700, height=550, 
-                             zoom=3, mapbox_style="open-street-map",
+                             width=700, height=550, 
+                             zoom=2.5, mapbox_style="open-street-map",
                              center=dict(lat=-11.619893, lon=-56.408030),
                              color_continuous_scale=px.colors.cyclical.IceFire,
                              color=COLUMNS.MARKET_PRICE_MEAN,
