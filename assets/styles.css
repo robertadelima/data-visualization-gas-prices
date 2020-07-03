@@ -7,7 +7,7 @@ body {
 
 header {
     display: flex;
-    background-color:cadetblue;
+    background-color: cadetblue;
     /*border: 3px solid green;*/
 }
 
@@ -39,16 +39,13 @@ header {
     /*width: 60%;*/
 }
 
-.badge {
-    border: 1px solid red;
-    vertical-align: middle;
-}
-
 .card-title{
+    /*border: 3px solid red;*/
     text-align: center;
 }
 
 .card-text{
+    /*border: 3px solid blue;*/
     text-align: center;
 }
 

@@ -98,6 +98,7 @@ filters = html.Div([
         id="selected_product",
         options=options_from_iterable(PRODUCTS),
         value='GASOLINA COMUM',
+        labelStyle={'display': 'inline-block', 'margin':'4px'},
         className="dcc_control",
     ),
 ], className='filters-div')
