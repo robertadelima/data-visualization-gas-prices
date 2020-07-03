@@ -87,7 +87,7 @@ filters = html.Div([
     dcc.Dropdown(id="selected_cities",
             options=options_from_iterable(CITIES),
             multi=True,
-            value=['ITAJAI', 'SAO PAULO'],
+            value=['FLORIANOPOLIS', 'SAO PAULO', 'MANAUS', 'SALVADOR', 'BRASILIA'],
             className="dcc_control",
             ),
     html.Br(),
