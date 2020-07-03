@@ -1,4 +1,4 @@
-body{
+body {
     /*border: 3px solid red;*/
     max-width: 1336px;
     min-width: 1080px;
@@ -11,7 +11,7 @@ header {
     /*border: 3px solid green;*/
 }
 
-.header_title {
+.header-title {
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     padding: 10px 20px 0px 20px;
     /*border: 1px solid palevioletred;*/
@@ -21,13 +21,7 @@ header {
     border: 1px solid palevioletred;
 }*/
 
-.header_flag {
-    text-align: right;
-    padding-right: 10px;
-    vertical-align: middle;
-}
-
-.map_and_filters {
+.map-and-filters {
     /*border: 1px solid yellow;*/
     display: flex;
 }
@@ -38,20 +32,16 @@ header {
     display: inline-block;
 }
 
-.brazil_map {
+.brazil-map {
     width: 60%;
     /*border: 3px solid yellow;*/
     margin: 0px;
     /*width: 60%;*/
 }
 
-.badge{
+.badge {
     border: 1px solid red;
     vertical-align: middle;
-}
-
-.card_icons{
-    width: 50%;
 }
 
 .card-title{

@@ -31,7 +31,7 @@ def values_from_iterable(iterable):
 
 cities_map = html.Div([
     dcc.Graph(id='brazil_map', figure={}),
-], className='brazil_map')
+], className='brazil-map')
 
 info_badges = html.Div([
     dbc.Row(
@@ -122,8 +122,8 @@ header_section = html.Div([
         html.Div([
             html.H1('Preços dos Combustíveis no Brasil'),
             html.H6('Última atualização: 20/06/2020'),
-        ], className="header_title")
-    ], className="header_div")
+        ], className="header-title")
+    ], className="header-div")
 ])
 data_selection_section = html.Div([
     cities_map,
@@ -131,7 +131,7 @@ data_selection_section = html.Div([
         info_badges,
         filters,
     ], className="filters")
-], className="map_and_filters")
+], className="map-and-filters")
 
 plots_section = html.Div([
      dcc.Graph(id='market_price_plot', figure={}),
