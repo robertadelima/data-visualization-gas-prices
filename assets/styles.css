@@ -1,8 +1,8 @@
 body{
     /*border: 3px solid red;*/
-    max-width: 1920px;
+    max-width: 1336px;
     min-width: 1080px;
-    justify-content: center;
+    margin: auto;
 }
 
 header {
