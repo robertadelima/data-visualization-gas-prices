@@ -23,6 +23,10 @@ def options_from_iterable(iterable):
               "value": str(option)}
             for option in iterable]
 
+def values_from_iterable(iterable):
+    return {str(option): str(option)
+            for option in iterable}
+
 # --------------------
 
 cities_map = html.Div([
@@ -101,16 +105,12 @@ filters = html.Div([
 
 
 date_slider = html.Div([
-    html.Div([
-        html.H2(min(YEARS)),
-        html.H2(max(YEARS),
-                style={'float': 'right', 'vertical-align': 'top'}),
-    ]),
     dcc.RangeSlider(
         id="selected_years",
         min=min(YEARS),
         max=max(YEARS),
         value=(min(YEARS), max(YEARS)),
+        marks=values_from_iterable(YEARS),
         className="dcc_control",
     ),
 ])
