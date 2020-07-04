@@ -1,8 +1,17 @@
-header {
-    display: flex;
+body {
+    /*border: 3px solid red;*/
+    max-width: 1400px;
+    min-width: 1150px;
+    margin: auto;
 }
 
-.header_title {
+header {
+    display: flex;
+    background-color: cadetblue;
+    /*border: 3px solid green;*/
+}
+
+.header-title {
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     padding: 10px 20px 0px 20px;
     /*border: 1px solid palevioletred;*/
@@ -12,40 +21,51 @@ header {
     border: 1px solid palevioletred;
 }*/
 
-.header_flag {
-    text-align: right;
-    padding-right: 10px;
-    vertical-align: middle;
-}
-
-.map_and_filters {
+.map-and-filters {
     /*border: 1px solid yellow;*/
     display: flex;
 }
 
 .filters {
-    /*border: 1px solid yellowgreen;*/
+    width: 40%;
+    /*border: 3px solid blue;*/
     display: inline-block;
 }
 
-.brazil_map {
-    margin: 0px;
+.brazil-map {
     width: 60%;
-}
-
-.badge{
-    /*border: 1px solid red;*/
-    vertical-align: middle;
-}
-
-.card_icons{
-    width: 50%;
+    /*border: 3px solid yellow;*/
+    margin: 0px;
 }
 
 .card-title{
+    /*border: 3px solid red;*/
     text-align: center;
 }
 
 .card-text{
+    /*border: 3px solid blue;*/
     text-align: center;
+}
+
+.card {
+    height: 100%;
+    /*border: 3px solid grey;*/
+}
+
+.cards-row{
+    padding: 20px;
+    /*border: 3px solid red;*/
+}
+
+.slider_control{
+    padding: 0px 20px 0px 20px;
+}
+
+
+
+.filters-div{
+    /*border: 3px solid red;*/
+    display: inline-block; 
+    padding: 20px;
 }

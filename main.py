@@ -23,11 +23,15 @@ def options_from_iterable(iterable):
               "value": str(option) }
             for option in iterable]
 
+def values_from_iterable(iterable):
+    return {str(option): str(option)
+            for option in iterable}
+
 # --------------------
 
 cities_map = html.Div([
     dcc.Graph(id='brazil_map', figure={}),
-], className='brazil_map')
+], className='brazil-map')
 
 info_badges = html.Div([
     dbc.Row(
@@ -51,7 +55,7 @@ info_badges = html.Div([
                             dbc.CardHeader(dbc.CardImg(src="/assets/price-icon.png", top=True, className='card-icons')),
                             dbc.CardBody(
                                 [
-                                    html.H6("Preços aferidos", className="card-title"),
+                                    html.H6("Preços analisados", className="card-title"),
                                     html.H2(id="prices_badge_count", className="card-text"),
                             ]
                             ),
@@ -64,15 +68,15 @@ info_badges = html.Div([
                             dbc.CardHeader(dbc.CardImg(src="/assets/months-icon.png", top=True, className='card-icons')),
                             dbc.CardBody(
                                 [
-                                    html.H6("Meses analisados", className="card-title"),
+                                    html.H6("Meses selecionados", className="card-title"),
                                     html.H2(id="months_badge_count", className="card-text"),
                             ]
                             ),
-                        ],
+                        ], className="card"
                     )
                 ]))
-            ], style={'padding':'20px'}
-        ), 
+            ], className="cards-row",
+        ),
 ],)
 
 filters = html.Div([
@@ -96,34 +100,33 @@ filters = html.Div([
         id="selected_product",
         options=options_from_iterable(PRODUCTS),
         value='GASOLINA COMUM',
-        labelStyle={"display": "inline-block"},
+        labelStyle={'display': 'inline-block', 'margin':'4px'},
         className="dcc_control",
     ),
-], style={'display': 'inline-block', 'padding': '20px'})
+], className='filters-div')
 
 
 date_slider = html.Div([
     html.Div([
-        html.H2(min(YEARS)),
-        html.H2(max(YEARS),
-                style={'float': 'right', 'vertical-align': 'top'}),
+        html.H5("Período selecionado:"),
     ]),
     dcc.RangeSlider(
         id="selected_years",
         min=min(YEARS),
         max=max(YEARS),
         value=(min(YEARS), max(YEARS)),
+        marks=values_from_iterable(YEARS),
         className="dcc_control",
     ),
-])
+], className="slider_control")
 
 header_section = html.Div([
     html.Header([
         html.Div([
             html.H1('Preços dos Combustíveis no Brasil'),
             html.H6('Última atualização: 20/06/2020'),
-        ], className="header_title")
-    ], className="header_div")
+        ], className="header-title")
+    ], className="header-div")
 ])
 data_selection_section = html.Div([
     cities_map,
@@ -131,7 +134,7 @@ data_selection_section = html.Div([
         info_badges,
         filters,
     ], className="filters")
-], className="map_and_filters")
+], className="map-and-filters")
 
 plots_section = html.Div([
      dcc.Graph(id='market_price_plot', figure={}),
@@ -159,11 +162,13 @@ def build_brazil_map_figure(filtered_dataset):
     return px.scatter_mapbox(filtered_dataset,
                              lat=COLUMNS.LATITUDE, lon=COLUMNS.LONGITUDE,
                              size=COLUMNS.MARKET_PRICE_MEAN,
-                             width=700, height=550, zoom=3, mapbox_style="open-street-map",
+                             width=700, height=550,
+                             zoom=2.5, mapbox_style="open-street-map",
                              center=dict(lat=-11.619893, lon=-56.408030),
                              color_continuous_scale=px.colors.cyclical.IceFire,
                              color=COLUMNS.MARKET_PRICE_MEAN,
-                             title="Preço Médio do Combustível nas Revendas")
+                             title="Preço Médio do Combustível nas Revendas",
+    )
 
 def build_market_price_plot(filtered_dataset):
     return px.line(filtered_dataset,
@@ -186,7 +191,8 @@ def build_market_price_std_deviation_plot(filtered_dataset):
                    y=COLUMNS.MARKET_PRICE_STD,
                    barmode='group',
                    color='ANO',
-                   title='Desvio Padrão Médio dos Preços nas Revendas')
+                   title='Desvio Padrão Médio dos Preços nas Revendas',
+                   color_continuous_scale=px.colors.cyclical.IceFire)
 
 def build_market_price_var_coef_plot(filtered_dataset):
     return px.bar(filtered_dataset,
@@ -194,7 +200,8 @@ def build_market_price_var_coef_plot(filtered_dataset):
                    y=COLUMNS.MARKET_PRICE_VAR_COEF,
                    barmode='group',
                    color='ANO',
-                   title='Coeficiente de Variação Médio dos Preços nas Revendas')
+                   title='Coeficiente de Variação Médio dos Preços nas Revendas',
+                   color_continuous_scale=px.colors.cyclical.IceFire)
 
 def filter_by_places(dataset, selected_places):
     '''
