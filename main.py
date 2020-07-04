@@ -20,7 +20,7 @@ with open(".mapbox_token.txt") as map_token_file:
 
 def options_from_iterable(iterable):
     return [{ "label": str(option),
-              "value": str(option)}
+              "value": str(option) }
             for option in iterable]
 
 # --------------------
@@ -80,10 +80,12 @@ filters = html.Div([
     html.H5("Locais selecionados:",
         className="dcc_control"
     ),
-    dcc.Dropdown(id="selected_cities",
-            options=options_from_iterable(CITIES),
+    dcc.Dropdown(id="selected_places",
+            options=[{ "label": PLACES_DICT[place_id],
+                       "value": place_id }
+                     for place_id in PLACES_DICT],
             multi=True,
-            value=['ITAJAI', 'SAO PAULO'],
+            value=['state_SANTA CATARINA', 'city_ITAJAI'],
             className="dcc_control",
             ),
     html.Br(),
@@ -167,20 +169,20 @@ def build_market_price_plot(filtered_dataset):
     return px.line(filtered_dataset,
                    x=COLUMNS.MONTH,
                    y=COLUMNS.MARKET_PRICE_MEAN,
-                   line_group=COLUMNS.CITY,
-                   color=COLUMNS.CITY,
+                   line_group=COLUMNS.PLACE_NAME,
+                   color=COLUMNS.PLACE_NAME,
                    title="Margem Média das Revendas")
 
 def build_market_margin_plot(filtered_dataset):
     return px.line(filtered_dataset,
                    x=COLUMNS.MONTH,
                    y=COLUMNS.MARKET_MARGIN,
-                   line_group=COLUMNS.CITY,
-                   color=COLUMNS.CITY)
+                   line_group=COLUMNS.PLACE_NAME,
+                   color=COLUMNS.PLACE_NAME)
 
 def build_market_price_std_deviation_plot(filtered_dataset):
     return px.bar(filtered_dataset,
-                   x=COLUMNS.CITY,
+                   x=COLUMNS.PLACE_NAME,
                    y=COLUMNS.MARKET_PRICE_STD,
                    barmode='group',
                    color='ANO',
@@ -188,11 +190,45 @@ def build_market_price_std_deviation_plot(filtered_dataset):
 
 def build_market_price_var_coef_plot(filtered_dataset):
     return px.bar(filtered_dataset,
-                   x=COLUMNS.CITY,
+                   x=COLUMNS.PLACE_NAME,
                    y=COLUMNS.MARKET_PRICE_VAR_COEF,
                    barmode='group',
                    color='ANO',
                    title='Coeficiente de Variação Médio dos Preços nas Revendas')
+
+def filter_by_places(dataset, selected_places):
+    '''
+    Returns a dataset with data matching
+    any of the selected places
+    '''
+    if type(selected_places) is not list:
+        selected_places = [selected_places]
+
+    cities = []
+    states = []
+    regions = []
+
+    def remove_id_prefix(place_id):
+        return ' '.join(place_id.split('_')[1:])
+
+    for place_id in selected_places:
+        if place_id.startswith('city'):
+            city_with_uf = remove_id_prefix(place_id)
+            cities.append(remove_uf(city_with_uf))
+        elif place_id.startswith('state'):
+            state = remove_id_prefix(place_id)
+            states.append(state)
+        elif place_id.startswith('region'):
+            prefixed_region = remove_id_prefix(place_id)
+            regions.append(remove_region_prefix(prefixed_region))
+        else:
+            raise Exception(place_id, PLACES_DICT[place_id])
+
+    filters = (dataset[COLUMNS.CITY_NAME].isin(cities) |
+                dataset[COLUMNS.STATE].isin(states) |
+                dataset[COLUMNS.REGION].isin(regions))
+
+    return dataset[filters]
 
 @app.callback(
     [Output(component_id='brazil_map', component_property='figure'),
@@ -202,30 +238,25 @@ def build_market_price_var_coef_plot(filtered_dataset):
      Output(component_id='market_price_coef_var_plot', component_property='figure'),
      Output(component_id='places_badge_count', component_property='children'),
      Output(component_id='prices_badge_count', component_property='children'),
-     Output(component_id='months_badge_count', component_property='children')],
-    [Input(component_id='selected_cities', component_property='value'),
-    Input(component_id='selected_product', component_property='value'),
-    Input(component_id='selected_years', component_property='value')
-    ]
+     Output(component_id='months_badge_count', component_property='children'),],
+    [Input(component_id='selected_product', component_property='value'),
+     Input(component_id='selected_years', component_property='value'),
+     Input(component_id='selected_places', component_property='value'),]
 )
-def update_plots_from_filters(selected_cities, selected_product, selected_year_range):
-
-    if type(selected_cities) is not list:
-        selected_cities = [selected_cities]
-
+def update_plots_from_filters(selected_product, selected_year_range, selected_places):
     product_filter = DATASET[COLUMNS.PRODUCT] == selected_product
-    cities_filter = DATASET[COLUMNS.CITY_NAME].isin(selected_cities)
 
     dataset_years = DATASET[COLUMNS.MONTH].dt.year
     years_filter = ((dataset_years >= selected_year_range[0]) &
                     (dataset_years <= selected_year_range[1]))
 
-    filtered_dataset = DATASET[product_filter &
-                               cities_filter &
-                               years_filter]
+    filtered_dataset = DATASET[product_filter & years_filter]
+    filtered_dataset = filter_by_places(filtered_dataset, selected_places)
+
+    filtered_dataset = generate_aggregate_data(filtered_dataset)
 
     filtered_dataset_grouped_by_year = filtered_dataset.groupby([
-                                        filtered_dataset[COLUMNS.CITY],
+                                        filtered_dataset[COLUMNS.PLACE_NAME],
                                         filtered_dataset[COLUMNS.MONTH].dt.year]).mean()
     filtered_dataset_grouped_by_year = filtered_dataset_grouped_by_year.reset_index()
     filtered_dataset_grouped_by_year.rename(columns={'MÊS': 'ANO'}, inplace=True)
@@ -236,8 +267,8 @@ def update_plots_from_filters(selected_cities, selected_product, selected_year_r
     market_price_std_deviation_plot = build_market_price_std_deviation_plot(filtered_dataset_grouped_by_year)
     market_price_var_coef_plot = build_market_price_var_coef_plot(filtered_dataset_grouped_by_year)
 
-    places_badge_count = len(selected_cities)
-    prices_badge_count = filtered_dataset[COLUMNS.GAS_STATION_COUNT].sum()
+    places_badge_count = len(selected_places)
+    prices_badge_count = filtered_dataset[COLUMNS.GAS_STATION_COUNT].sum() # TODO remove overlaps
     months_badge_count = len(filtered_dataset[COLUMNS.MONTH].unique())
 
     return (brazil_map_figure,
