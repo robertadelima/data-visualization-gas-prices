@@ -63,14 +63,13 @@ def __merge_city_data(gas_data, cities_data):
 
     return pd.merge(gas_data,            unique_cities_data,
                     left_on='MUNICÍPIO', right_on='NOME MUNICIPIO',
-                    how='left')
+                    how='inner')
 
 
 __gas_data[COLUMNS.MONTH] = __parse_dates(__gas_data[COLUMNS.MONTH])
 __df = __merge_city_data(__gas_data, __cities_data)
 
 DATASET = __df
-
 PRODUCTS = list(__df[COLUMNS.PRODUCT].unique())
 YEARS = list(__df[COLUMNS.MONTH].dt.year.unique())
 
@@ -99,7 +98,7 @@ def generate_aggregate_data(dataset):
     COLUMNS.PLACE_NAME = 'NOME DO LOCAL'
 
     dataset[COLUMNS.PLACE_TYPE] = 'CIDADE'
-    dataset[COLUMNS.PLACE_NAME] = dataset[COLUMNS.CITY_NAME]\
+    dataset[COLUMNS.PLACE_NAME] = dataset[COLUMNS.CITY]\
                                   .apply(lambda name: PLACES_DICT['city_' + name])
 
     column_aggregations = { COLUMNS.GAS_STATION_COUNT: 'sum',

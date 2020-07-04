@@ -208,25 +208,24 @@ def filter_by_places(dataset, selected_places):
     states = []
     regions = []
 
-    def remove_id_prefix(place_id):
-        return ' '.join(place_id.split('_')[1:])
-
     for place_id in selected_places:
         if place_id.startswith('city'):
-            city_with_uf = remove_id_prefix(place_id)
-            cities.append(remove_uf(city_with_uf))
+            cities.append(PLACES_DICT[place_id])
         elif place_id.startswith('state'):
-            state = remove_id_prefix(place_id)
-            states.append(state)
+            states.append(PLACES_DICT[place_id])
         elif place_id.startswith('region'):
-            prefixed_region = remove_id_prefix(place_id)
-            regions.append(remove_region_prefix(prefixed_region))
+            regions.append(PLACES_DICT[place_id])
         else:
-            raise Exception(place_id, PLACES_DICT[place_id])
+            raise Exception(place_id)
 
-    filters = (dataset[COLUMNS.CITY_NAME].isin(cities) |
-                dataset[COLUMNS.STATE].isin(states) |
-                dataset[COLUMNS.REGION].isin(regions))
+    cities_filter = ((dataset[COLUMNS.PLACE_TYPE] == 'CIDADE') &
+                     (dataset[COLUMNS.PLACE_NAME].isin(cities)))
+    states_filter = ((dataset[COLUMNS.PLACE_TYPE] == 'ESTADO') &
+                     (dataset[COLUMNS.PLACE_NAME].isin(states)))
+    regions_filter = ((dataset[COLUMNS.PLACE_TYPE] == 'REGIAO') &
+                     (dataset[COLUMNS.PLACE_NAME].isin(regions)))
+
+    filters = cities_filter | states_filter | regions_filter
 
     return dataset[filters]
 
@@ -251,9 +250,10 @@ def update_plots_from_filters(selected_product, selected_year_range, selected_pl
                     (dataset_years <= selected_year_range[1]))
 
     filtered_dataset = DATASET[product_filter & years_filter]
-    filtered_dataset = filter_by_places(filtered_dataset, selected_places)
 
     filtered_dataset = generate_aggregate_data(filtered_dataset)
+
+    filtered_dataset = filter_by_places(filtered_dataset, selected_places)
 
     filtered_dataset_grouped_by_year = filtered_dataset.groupby([
                                         filtered_dataset[COLUMNS.PLACE_NAME],
