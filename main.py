@@ -268,7 +268,10 @@ def update_plots_from_filters(selected_product, selected_year_range, selected_pl
     filtered_dataset_grouped_by_year = filtered_dataset_grouped_by_year.reset_index()
     filtered_dataset_grouped_by_year.rename(columns={'MÊS': 'ANO'}, inplace=True)
 
-    brazil_map_figure = build_brazil_map_figure(filtered_dataset)
+    filtered_dataset_grouped_by_places = filtered_dataset.groupby(
+                                            filtered_dataset[COLUMNS.PLACE_NAME]).mean()
+
+    brazil_map_figure = build_brazil_map_figure(filtered_dataset_grouped_by_places)
     market_price_plot_figure = build_market_price_plot(filtered_dataset)
     market_margin_plot_figure = build_market_margin_plot(filtered_dataset)
     market_price_std_deviation_plot = build_market_price_std_deviation_plot(filtered_dataset_grouped_by_year)
