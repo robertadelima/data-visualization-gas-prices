@@ -98,7 +98,7 @@ filters = html.Div([
     ),
     dcc.RadioItems(
         id="selected_product",
-        options=options_from_iterable(PRODUCTS),
+        options=options_from_iterable(map(lambda label: f' {label}', PRODUCTS)),
         value='GASOLINA COMUM',
         labelStyle={'display': 'inline-block', 'margin':'4px'},
         className="dcc_control",
