@@ -165,7 +165,7 @@ def build_brazil_map_figure(filtered_dataset):
                              width=800, height=600,
                              zoom=2.5, mapbox_style="open-street-map",
                              center=dict(lat=-11.619893, lon=-56.408030),
-                             color_continuous_scale=px.colors.sequential.Purples,
+                             color_continuous_scale=px.colors.sequential.Aggrnyl,
                              color=COLUMNS.MARKET_PRICE_MEAN,
                              hover_name=COLUMNS.PLACE_NAME,
                              hover_data={ COLUMNS.MARKET_PRICE_MEAN: ':.2f',
