@@ -262,20 +262,16 @@ def update_plots_from_filters(selected_product, selected_year_range, selected_pl
 
     filtered_dataset = filter_by_places(filtered_dataset, selected_places)
 
-    filtered_dataset_grouped_by_year = filtered_dataset.groupby([
-                                        filtered_dataset[COLUMNS.PLACE_NAME],
-                                        filtered_dataset[COLUMNS.MONTH].dt.year]).mean()
-    filtered_dataset_grouped_by_year = filtered_dataset_grouped_by_year.reset_index()
-    filtered_dataset_grouped_by_year.rename(columns={'MÊS': 'ANO'}, inplace=True)
-
-    filtered_dataset_grouped_by_places = filtered_dataset.groupby(
-                                            filtered_dataset[COLUMNS.PLACE_NAME]).mean()
-
-    brazil_map_figure = build_brazil_map_figure(filtered_dataset_grouped_by_places)
     market_price_plot_figure = build_market_price_plot(filtered_dataset)
     market_margin_plot_figure = build_market_margin_plot(filtered_dataset)
-    market_price_std_deviation_plot = build_market_price_std_deviation_plot(filtered_dataset_grouped_by_year)
-    market_price_var_coef_plot = build_market_price_var_coef_plot(filtered_dataset_grouped_by_year)
+
+    filtered_dataset['ANO'] = filtered_dataset[COLUMNS.MONTH].dt.year
+    place_groups = filtered_dataset.groupby([COLUMNS.PLACE_NAME], as_index=False)
+    place_and_year_groups = filtered_dataset.groupby([COLUMNS.PLACE_NAME, 'ANO'], as_index=False)
+
+    brazil_map_figure = build_brazil_map_figure(place_groups.mean())
+    market_price_std_deviation_plot = build_market_price_std_deviation_plot(place_and_year_groups.mean())
+    market_price_var_coef_plot = build_market_price_var_coef_plot(place_and_year_groups.mean())
 
     places_badge_count = len(selected_places)
     prices_badge_count = filtered_dataset[COLUMNS.GAS_STATION_COUNT].sum() # TODO remove overlaps
@@ -293,3 +289,6 @@ def update_plots_from_filters(selected_product, selected_year_range, selected_pl
 # Run
 if __name__ == '__main__':
     app.run_server(debug=True)
+
+a['YEAR'] = a[COLUMNS.MONTH].dt.year
+a.groupby([COLUMNS.CITY_NAME, 'YEAR'], as_index=False).mean().head(1)
