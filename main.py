@@ -163,7 +163,7 @@ def build_brazil_map_figure(filtered_dataset):
                              lat=COLUMNS.LATITUDE, lon=COLUMNS.LONGITUDE,
                              size=COLUMNS.MARKET_PRICE_MEAN,
                              width=800, height=600,
-                             zoom=2.5, mapbox_style="open-street-map",
+                             zoom=2.5, # mapbox_style="dark",
                              center=dict(lat=-11.619893, lon=-56.408030),
                              color_continuous_scale=px.colors.sequential.Aggrnyl,
                              color=COLUMNS.MARKET_PRICE_MEAN,
