@@ -293,6 +293,3 @@ def update_plots_from_filters(selected_product, selected_year_range, selected_pl
 # Run
 if __name__ == '__main__':
     app.run_server(debug=True)
-
-a['YEAR'] = a[COLUMNS.MONTH].dt.year
-a.groupby([COLUMNS.CITY_NAME, 'YEAR'], as_index=False).mean().head(1)
