@@ -233,14 +233,15 @@ def build_market_price_plot(filtered_dataset):
                    y=COLUMNS.MARKET_PRICE_MEAN,
                    line_group=COLUMNS.PLACE_NAME,
                    color=COLUMNS.PLACE_NAME,
-                   title="Margem Média das Revendas")
+                   title="Preço Médio nas Revendas")
 
 def build_market_margin_plot(filtered_dataset):
     return px.line(filtered_dataset,
                    x=COLUMNS.MONTH,
                    y=COLUMNS.MARKET_MARGIN,
                    line_group=COLUMNS.PLACE_NAME,
-                   color=COLUMNS.PLACE_NAME)
+                   color=COLUMNS.PLACE_NAME,
+                   title='Margem Média das Revendas')
 
 def build_market_price_std_deviation_plot(filtered_dataset):
     return px.bar(filtered_dataset,
