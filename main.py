@@ -159,7 +159,7 @@ app.layout = html.Div([
     plots_section
 ])
 
-def build_brazil_map_figure(filtered_dataset):
+def build_brazil_map_figure(filtered_dataset, selected_product):
     return px.scatter_mapbox(filtered_dataset,
                              lat=COLUMNS.LATITUDE, lon=COLUMNS.LONGITUDE,
                              size=COLUMNS.MARKET_PRICE_MEAN,
@@ -172,7 +172,7 @@ def build_brazil_map_figure(filtered_dataset):
                              hover_data={ COLUMNS.MARKET_PRICE_MEAN: ':.2f',
                                           COLUMNS.LATITUDE: False,
                                           COLUMNS.LONGITUDE: False },
-                             title="Preço Médio do Combustível nas Revendas",
+                             title=f"Preço Médio do Combustível nas Revendas { PRODUCT_UNITS[selected_product] }",
     ) 
 
 """#def get_polygon(filtered_dataset, color='blue'):
@@ -227,38 +227,39 @@ def build_brazil_map_figure(filtered_dataset):
     return fig"""
 
 
-def build_market_price_plot(filtered_dataset):
+def build_market_price_plot(filtered_dataset, selected_product):
     return px.line(filtered_dataset,
                    x=COLUMNS.MONTH,
                    y=COLUMNS.MARKET_PRICE_MEAN,
                    line_group=COLUMNS.PLACE_NAME,
+                   hover_data = ['UNIDADE DE MEDIDA'],
                    color=COLUMNS.PLACE_NAME,
-                   title="Preço Médio nas Revendas")
+                   title=f"Preço Médio nas Revendas { PRODUCT_UNITS[selected_product] }")
 
-def build_market_margin_plot(filtered_dataset):
+def build_market_margin_plot(filtered_dataset, selected_product):
     return px.line(filtered_dataset,
                    x=COLUMNS.MONTH,
                    y=COLUMNS.MARKET_MARGIN,
                    line_group=COLUMNS.PLACE_NAME,
                    color=COLUMNS.PLACE_NAME,
-                   title='Margem Média das Revendas')
+                   title=f"Margem Média das Revendas { PRODUCT_UNITS[selected_product] }")
 
-def build_market_price_std_deviation_plot(filtered_dataset):
+def build_market_price_std_deviation_plot(filtered_dataset, selected_product):
     return px.bar(filtered_dataset,
                    x=COLUMNS.PLACE_NAME,
                    y=COLUMNS.MARKET_PRICE_STD,
                    barmode='group',
                    color='ANO',
-                   title='Desvio Padrão Médio dos Preços nas Revendas',
+                   title=f"Desvio Padrão Médio dos Preços nas Revendas { PRODUCT_UNITS[selected_product] }",
                    color_continuous_scale=px.colors.cyclical.IceFire)
 
-def build_market_price_var_coef_plot(filtered_dataset):
+def build_market_price_var_coef_plot(filtered_dataset, selected_product):
     return px.bar(filtered_dataset,
                    x=COLUMNS.PLACE_NAME,
                    y=COLUMNS.MARKET_PRICE_VAR_COEF,
                    barmode='group',
                    color='ANO',
-                   title='Coeficiente de Variação Médio dos Preços nas Revendas',
+                   title=f"Coeficiente de Variação Médio dos Preços nas Revendas { PRODUCT_UNITS[selected_product] }",
                    color_continuous_scale=px.colors.cyclical.IceFire)
 
 def filter_by_places(dataset, selected_places):
@@ -320,16 +321,16 @@ def update_plots_from_filters(selected_product, selected_year_range, selected_pl
 
     filtered_dataset = filter_by_places(filtered_dataset, selected_places)
 
-    market_price_plot_figure = build_market_price_plot(filtered_dataset)
-    market_margin_plot_figure = build_market_margin_plot(filtered_dataset)
+    market_price_plot_figure = build_market_price_plot(filtered_dataset, selected_product)
+    market_margin_plot_figure = build_market_margin_plot(filtered_dataset, selected_product)
 
     filtered_dataset['ANO'] = filtered_dataset[COLUMNS.MONTH].dt.year.astype(str)
     place_groups = filtered_dataset.groupby([COLUMNS.PLACE_NAME], as_index=False)
     place_and_year_groups = filtered_dataset.groupby([COLUMNS.PLACE_NAME, 'ANO'], as_index=False)
 
-    brazil_map_figure = build_brazil_map_figure(place_groups.mean())
-    market_price_std_deviation_plot = build_market_price_std_deviation_plot(place_and_year_groups.mean())
-    market_price_var_coef_plot = build_market_price_var_coef_plot(place_and_year_groups.mean())
+    brazil_map_figure = build_brazil_map_figure(place_groups.mean(), selected_product)
+    market_price_std_deviation_plot = build_market_price_std_deviation_plot(place_and_year_groups.mean(), selected_product)
+    market_price_var_coef_plot = build_market_price_var_coef_plot(place_and_year_groups.mean(), selected_product)
 
     places_badge_count = len(selected_places)
     prices_badge_count = filtered_dataset[COLUMNS.GAS_STATION_COUNT].sum() # TODO remove overlaps

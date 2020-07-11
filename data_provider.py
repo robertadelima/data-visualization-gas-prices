@@ -76,6 +76,14 @@ __df = __merge_city_data(__gas_data, __cities_data)
 DATASET = __df
 PRODUCTS = list(__df[COLUMNS.PRODUCT].unique())
 YEARS = list(__df[COLUMNS.MONTH].dt.year.unique())
+PRODUCT_UNITS = {
+    "ÓLEO DIESEL" : "(R$/L)",
+    "ÓLEO DIESEL S10" : "(R$/L)",
+    "ETANOL HIDRATADO" : "(R$/L)",
+    "GASOLINA COMUM" : "(R$/L)",
+    "GLP" : "(R$/13Kg)",
+    "GNV" : "(R$/m^3)"
+}
 
 REGIONS = list(__df[COLUMNS.REGION].unique())
 STATES = list(__df[COLUMNS.STATE].unique())
