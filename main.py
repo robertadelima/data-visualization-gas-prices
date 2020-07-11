@@ -45,7 +45,7 @@ info_badges = html.Div([
                             dbc.CardBody(
                                 [
                                     html.H6("Locais escolhidos", className="card-title"),
-                                    html.H2(id="places_badge_count", className="card-text"),
+                                    html.H4(id="places_badge_count", className="card-text"),
                             ]
                             )
                         ]
@@ -58,7 +58,7 @@ info_badges = html.Div([
                             dbc.CardBody(
                                 [
                                     html.H6("Preços analisados", className="card-title"),
-                                    html.H2(id="prices_badge_count", className="card-text"),
+                                    html.H4(id="prices_badge_count", className="card-text"),
                             ]
                             ),
                         ],
@@ -71,7 +71,7 @@ info_badges = html.Div([
                             dbc.CardBody(
                                 [
                                     html.H6("Meses selecionados", className="card-title"),
-                                    html.H2(id="months_badge_count", className="card-text"),
+                                    html.H4(id="months_badge_count", className="card-text"),
                             ]
                             ),
                         ], className="card"
@@ -297,26 +297,62 @@ def filter_by_places(dataset, selected_places):
     return dataset[filters]
 
 def get_gas_stations_count(dataset):
+    #print(dataset)
+    #print(len(dataset))
+    #print(len(dataset.dropna()))
     '''
     Computes the real gas station total count,
     removing duplicates from compound places
     (one place inside the other)
     '''
 
-    cities_data = dataset[dataset[COLUMNS.PLACE_TYPE] == 'CIDADE']
-    states_data = dataset[dataset[COLUMNS.PLACE_TYPE] == 'ESTADO']
-    regions_data = dataset[dataset[COLUMNS.PLACE_TYPE] == 'REGIAO']
+    cities_data = dataset[dataset[COLUMNS.PLACE_TYPE] == 'CIDADE'].dropna()
+    states_data = dataset[dataset[COLUMNS.PLACE_TYPE] == 'ESTADO'].dropna()
+    regions_data = dataset[dataset[COLUMNS.PLACE_TYPE] == 'REGIAO'].dropna()
 
+    #DATASET[DATASET['ESTADO'] == states_data['NOME DO LOCAL']]['REGIÃO']
+    #states_data['REGION'] = DATASET[DATASET['ESTADO'] == states_data['NOME DO LOCAL']]['REGIÃO']
+
+    count_from_regions = regions_data[COLUMNS.GAS_STATION_COUNT].sum()
+
+    #cities_list = cities_data['MUNICÍPIO'].unique()
+    states_list = states_data['NOME DO LOCAL'].unique() #SE NOME DO LOCAL É UM ESTADO, NÃO TEM MAIS "ESTADO" E "REGIAÕ"
+    regions_list = regions_data['NOME DO LOCAL'].str.replace('REGIAO ', '').unique() #SE NOME DO LOCAL É UMA REGIAO, NÃO TEM MAIS "ESTADO" E "REGIAÕ"
+
+    #@np.vectorize
+    def is_under_selected_region(state):
+        if(type(state) is float):
+            return true
+        dataset_match_row = DATASET[DATASET['ESTADO'] == state].tail(1)
+        return dataset_match_row['REGIÃO'].isin(regions_list)
+
+    #print((states_data['NOME DO LOCAL']).dtype)
+
+    count_from_states = states_data[~(states_data['NOME DO LOCAL'].apply(is_under_selected_region))][COLUMNS.GAS_STATION_COUNT].sum() if len(states_data) > 0 else 0
+    count_from_cities = cities_data.loc[(~cities_data['ESTADO'].isin(states_list)) & (~cities_data['REGIÃO'].isin(regions_list))][COLUMNS.GAS_STATION_COUNT].sum()
+   
+
+    return sum([count_from_cities, count_from_states, count_from_regions])
+    #foreach cities_data, if cities_data['ESTADO'] in states_list, set qtd = 0
+    #foreach states_data, if states_data['REGIÃO'] in regions_list, set qtd = 0
+
+    '''count_from_regions = regions_data[COLUMNS.GAS_STATION_COUNT].sum()
+
+    # SOMA TODOS AS REGIÕES, FAZ UMA LISTA DE REGIÕES UNICAS FILTRADAS
+    # VERIFICA O DATASET PELOS ESTADOS -> SE A REGIÃO ESTIVER NA LISTA, SETA PRA ZERO
+    # VERIFICA O DATASET PELOS CIDADES -> 
+
+    count_from_states = states_data[COLUMNS.GAS_STATION_COUNT].sum()
     count_from_cities = cities_data[COLUMNS.GAS_STATION_COUNT].sum()
 
     @np.vectorize
     # PARANA, 100, ESTADO
     # SUL, 1000, REGIAO
     def withdraw_city_counts(place_name, place_gas_station_count, place_column):
-        '''
+        ''''''
         For each place, withdraw the sum of the
         gas station counts of the cities within the place.
-        '''
+        ''''''
         cd = cities_data
         city_within_place_filter = cd[place_column] == place_name
         # print(f'place_column={place_column}, place_name={place_name}')
@@ -341,10 +377,10 @@ def get_gas_stations_count(dataset):
     @np.vectorize
     # SUDESTE, 1000, REGIAO
     def withdraw_state_counts(place_name, place_gas_station_count, place_column):
-        '''
+        ''''''
         For each place, withdraw the sum of the
         gas station counts of the states within the place.
-        '''
+        ''''''
         sd = states_data
         state_within_place_filter = sd[place_column] == place_name
         # print(f'place_column={place_column}, place_name={place_name}')
@@ -370,9 +406,9 @@ def get_gas_stations_count(dataset):
             withdraw_state_counts(counts_by_region[COLUMNS.PLACE_NAME].str.replace('REGIAO ', ''),
                                 counts_by_region[COLUMNS.GAS_STATION_COUNT],
                                 COLUMNS.REGION)\
-                                .sum()
+                                .sum()'''
 
-    return sum([count_from_cities, count_from_states, count_from_regions])
+   
 
 # DATASET.head(1).transpose()
 
@@ -414,7 +450,8 @@ def update_plots_from_filters(selected_product, selected_year_range, selected_pl
     market_price_var_coef_plot = build_market_price_var_coef_plot(place_and_year_groups.mean(), selected_product)
 
     places_badge_count = len(selected_places)
-    prices_badge_count = get_gas_stations_count(filtered_dataset)
+    #prices_badge_count = get_gas_stations_count(filtered_dataset)
+    prices_badge_count = filtered_dataset[COLUMNS.GAS_STATION_COUNT].sum() 
     months_badge_count = len(filtered_dataset[COLUMNS.MONTH].unique())
 
     return (brazil_map_figure,
