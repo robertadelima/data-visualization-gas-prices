@@ -3,6 +3,7 @@ import locale as lcl
 
 gas_dataset_path = "data/dados-ANP-2013-2020.csv"
 cities_dataset_path = "data/dados-IBGE-municipios.csv"
+places_dataset_path = "data/brazil-places-polygons.csv"
 
 # Import data
 __gas_data = pd.read_csv(gas_dataset_path,
@@ -10,6 +11,9 @@ __gas_data = pd.read_csv(gas_dataset_path,
                          decimal=',', na_values=['-'])
 __cities_data = pd.read_csv(cities_dataset_path,
                             sep=';', encoding='cp1252')
+__places_data = pd.read_csv(places_dataset_path, 
+                            sep=',', decimal='.',
+                            encoding='cp1252')
 
 # Define aliases for quickly accessing columns
 class COLUMNS:
@@ -137,3 +141,6 @@ def generate_aggregate_data(dataset):
     return dataset.append(states_data)\
                   .append(regions_data)
 
+def merge_places_polygons_data(merged_city_gas_data):
+    return merged_city_gas_data.reset_index().merge(__places_data, how="inner",  
+        left_on='NOME DO LOCAL', right_on='State').set_index('NOME DO LOCAL')
