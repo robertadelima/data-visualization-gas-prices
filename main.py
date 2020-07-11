@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from shapely.geometry import Point
 
 import dash
 import dash_core_components as dcc
@@ -168,7 +169,59 @@ def build_brazil_map_figure(filtered_dataset):
                              color_continuous_scale=px.colors.cyclical.IceFire,
                              color=COLUMNS.MARKET_PRICE_MEAN,
                              title="Preço Médio do Combustível nas Revendas",
+    ) 
+
+"""#def get_polygon(filtered_dataset, color='blue'):
+def get_polygon(lons, lats, color='blue'):
+    #lons = filtered_dataset['Lon'].tolist()[:5]
+    #lats = filtered_dataset['Lat'].tolist()[:5]
+    print(type(lons[1]))
+    geojd = {"type": "FeatureCollection"}
+    geojd['features'] = []
+    coords = []
+    for lon, lat in zip(lons, lats): 
+        coords.append((lon, lat))   
+    #coords.append((lons[0], lats[0]))  #close the polygon  
+    geojd['features'].append({ "type": "Feature",
+                               "geometry": {"type": "Polygon",
+                                            "coordinates": [coords] }})
+    print(coords)
+    layer=dict(sourcetype = 'geojson',
+             source = geojd,
+             below ='',  
+             type = 'fill',   
+             color = color,
+             opacity = 0.2)
+    return layer 
+
+def build_brazil_map_figure(filtered_dataset):
+    fig = go.Figure(go.Scattermapbox(
+                        lat=filtered_dataset[COLUMNS.LATITUDE],
+                        lon=filtered_dataset[COLUMNS.LONGITUDE],
+                        mode='markers',
+                        text=filtered_dataset[COLUMNS.MARKET_PRICE_MEAN],
+    ))
+    fig.update_layout(mapbox_style="open-street-map",
+        hovermode='closest',
+        mapbox=dict(
+            bearing=0,
+            center=go.layout.mapbox.Center(
+                lat=-11.619893,
+                lon=-56.408030
+            ),
+        pitch=0,
+        zoom=2.5
+        )
     )
+    mylayers = []
+    filtered_with_polygons = merge_places_polygons_data(filtered_dataset)
+    mylayers.append(get_polygon(lats=[-29.081636, -28.208320, -27.005862, -26.237557, -26.196977], lons=[-49.620587, -50.480014, -53.374927, -53.510626, -48.761160],  color='gold'))
+    #mylayers.append(get_polygon(lats=[-28.61117903, -28.61112627, -28.54095732, -28.44592555, -27.84035526], lons=[-48.82158597, -48.82227018, -48.757575, -48.7096376, -48.50136667],  color='gold'))
+    #mylayers.append(get_polygon(filtered_dataset, color='gold'))
+    
+    fig.layout.update(mapbox_layers = mylayers); 
+    return fig"""
+
 
 def build_market_price_plot(filtered_dataset):
     return px.line(filtered_dataset,
