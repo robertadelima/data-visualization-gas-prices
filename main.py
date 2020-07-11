@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 # from shapely.geometry import Point
@@ -295,6 +296,86 @@ def filter_by_places(dataset, selected_places):
 
     return dataset[filters]
 
+def get_gas_stations_count(dataset):
+    '''
+    Computes the real gas station total count,
+    removing duplicates from compound places
+    (one place inside the other)
+    '''
+
+    cities_data = dataset[dataset[COLUMNS.PLACE_TYPE] == 'CIDADE']
+    states_data = dataset[dataset[COLUMNS.PLACE_TYPE] == 'ESTADO']
+    regions_data = dataset[dataset[COLUMNS.PLACE_TYPE] == 'REGIAO']
+
+    count_from_cities = cities_data[COLUMNS.GAS_STATION_COUNT].sum()
+
+    @np.vectorize
+    # PARANA, 100, ESTADO
+    # SUL, 1000, REGIAO
+    def withdraw_city_counts(place_name, place_gas_station_count, place_column):
+        '''
+        For each place, withdraw the sum of the
+        gas station counts of the cities within the place.
+        '''
+        cd = cities_data
+        city_within_place_filter = cd[place_column] == place_name
+        # print(f'place_column={place_column}, place_name={place_name}')
+        cities_within_place_data = cd[city_within_place_filter]
+        # print('city_within_place_data')
+        # print(cities_within_place_data)
+        cities_gas_station_counts = cities_within_place_data[COLUMNS.GAS_STATION_COUNT]
+        # print('cities_gas_station_counts')
+        # print(cities_gas_station_counts)
+
+        return place_gas_station_count - cities_gas_station_counts.sum()
+
+    count_from_states = 0
+    if len(states_data) > 0:
+        counts_by_state = states_data.groupby(COLUMNS.PLACE_NAME, as_index=False).sum()
+        count_from_states = \
+            withdraw_city_counts(counts_by_state[COLUMNS.PLACE_NAME],
+                                counts_by_state[COLUMNS.GAS_STATION_COUNT],
+                                COLUMNS.STATE)\
+                                .sum()
+
+    @np.vectorize
+    # SUDESTE, 1000, REGIAO
+    def withdraw_state_counts(place_name, place_gas_station_count, place_column):
+        '''
+        For each place, withdraw the sum of the
+        gas station counts of the states within the place.
+        '''
+        sd = states_data
+        state_within_place_filter = sd[place_column] == place_name
+        # print(f'place_column={place_column}, place_name={place_name}')
+        states_within_place_data = sd[state_within_place_filter]
+        # print('city_within_place_data')
+        # print(cities_within_place_data)
+        states_gas_station_counts = states_within_place_data[COLUMNS.GAS_STATION_COUNT]
+        # print('cities_gas_station_counts')
+        # print(cities_gas_station_counts)
+
+        return place_gas_station_count - states_gas_station_counts.sum()
+
+    count_from_regions = 0
+    if len(regions_data) > 0:
+        counts_by_region = regions_data.groupby(COLUMNS.PLACE_NAME, as_index=False).sum()
+
+        count_from_regions = \
+            withdraw_city_counts(counts_by_region[COLUMNS.PLACE_NAME].str.replace('REGIAO ', ''),
+                                counts_by_region[COLUMNS.GAS_STATION_COUNT],
+                                COLUMNS.REGION)\
+                                .sum()
+        count_from_regions += \
+            withdraw_state_counts(counts_by_region[COLUMNS.PLACE_NAME].str.replace('REGIAO ', ''),
+                                counts_by_region[COLUMNS.GAS_STATION_COUNT],
+                                COLUMNS.REGION)\
+                                .sum()
+
+    return sum([count_from_cities, count_from_states, count_from_regions])
+
+# DATASET.head(1).transpose()
+
 @app.callback(
     [Output(component_id='brazil_map', component_property='figure'),
      Output(component_id='market_price_plot', component_property='figure'),
@@ -333,7 +414,7 @@ def update_plots_from_filters(selected_product, selected_year_range, selected_pl
     market_price_var_coef_plot = build_market_price_var_coef_plot(place_and_year_groups.mean(), selected_product)
 
     places_badge_count = len(selected_places)
-    prices_badge_count = filtered_dataset[COLUMNS.GAS_STATION_COUNT].sum() # TODO remove overlaps
+    prices_badge_count = get_gas_stations_count(filtered_dataset)
     months_badge_count = len(filtered_dataset[COLUMNS.MONTH].unique())
 
     return (brazil_map_figure,

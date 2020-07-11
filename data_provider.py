@@ -152,3 +152,7 @@ def generate_aggregate_data(dataset):
 def merge_places_polygons_data(merged_city_gas_data):
     return merged_city_gas_data.reset_index().merge(__places_data, how="inner",  
         left_on='NOME DO LOCAL', right_on='State').set_index('NOME DO LOCAL')
+
+# DATASET.groupby(COLUMNS.PRODUCT).agg(['min', 'max']).transpose()
+
+# len(DATASET)
