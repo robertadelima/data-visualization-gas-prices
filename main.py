@@ -269,7 +269,7 @@ def update_plots_from_filters(selected_product, selected_year_range, selected_pl
     market_price_plot_figure = build_market_price_plot(filtered_dataset)
     market_margin_plot_figure = build_market_margin_plot(filtered_dataset)
 
-    filtered_dataset['ANO'] = filtered_dataset[COLUMNS.MONTH].dt.year
+    filtered_dataset['ANO'] = filtered_dataset[COLUMNS.MONTH].dt.year.astype(str)
     place_groups = filtered_dataset.groupby([COLUMNS.PLACE_NAME], as_index=False)
     place_and_year_groups = filtered_dataset.groupby([COLUMNS.PLACE_NAME, 'ANO'], as_index=False)
 
