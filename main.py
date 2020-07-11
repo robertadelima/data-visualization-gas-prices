@@ -90,7 +90,7 @@ filters = html.Div([
                        "value": place_id }
                      for place_id in PLACES_DICT],
             multi=True,
-            value=['state_SANTA CATARINA', 'city_ITAJAI'],
+            value=['city_MANAUS', 'city_BRASILIA', 'city_FLORIANOPOLIS', 'city_SALVADOR', 'city_SAO PAULO'],
             className="dcc_control",
             ),
     html.Br(),
@@ -115,7 +115,7 @@ date_slider = html.Div([
         id="selected_years",
         min=min(YEARS),
         max=max(YEARS),
-        value=(min(YEARS), max(YEARS)),
+        value=(2018, max(YEARS)),
         marks=values_from_iterable(YEARS),
         className="dcc_control",
     ),
