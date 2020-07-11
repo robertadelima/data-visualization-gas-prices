@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from shapely.geometry import Point
+# from shapely.geometry import Point
 
 import dash
 import dash_core_components as dcc
@@ -336,7 +336,7 @@ def update_plots_from_filters(selected_product, selected_year_range, selected_pl
 
     return (brazil_map_figure,
             market_price_plot_figure,
-            market_price_plot_figure,
+            market_margin_plot_figure,
             market_price_std_deviation_plot,
             market_price_var_coef_plot,
             places_badge_count,
